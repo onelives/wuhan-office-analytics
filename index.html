@@ -872,6 +872,134 @@
       text-decoration: underline;
     }
 
+    .tungee-audit {
+      padding: 13px 0 15px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tungee-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .tungee-heading strong {
+      color: #344054;
+      font-size: 12px;
+    }
+
+    .tungee-confidence {
+      display: inline-flex;
+      min-height: 22px;
+      align-items: center;
+      padding: 2px 7px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--surface-muted);
+      font-size: 10px;
+      font-weight: 680;
+      white-space: nowrap;
+    }
+
+    .tungee-confidence.high {
+      border-color: #b8dbc6;
+      color: var(--good);
+      background: var(--good-soft);
+    }
+
+    .tungee-confidence.medium {
+      border-color: #ead79a;
+      color: var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .tungee-confidence.low {
+      border-color: #efc5a1;
+      color: #a54c0b;
+      background: #fff3e8;
+    }
+
+    .tungee-confidence.none {
+      border-color: #e1e5eb;
+      color: #667085;
+      background: #f2f4f7;
+    }
+
+    .tungee-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 12px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .tungee-stats strong {
+      color: #344054;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tungee-query,
+    .tungee-status,
+    .tungee-note {
+      margin: 0;
+      color: #4a566b;
+      font-size: 11px;
+    }
+
+    .tungee-query {
+      color: #667085;
+    }
+
+    .tungee-status {
+      margin-top: 5px;
+      color: #263247;
+      font-weight: 650;
+    }
+
+    .tungee-note {
+      margin-top: 5px;
+    }
+
+    .tungee-samples {
+      display: grid;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .tungee-sample {
+      padding: 8px 9px;
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      background: #f8fafc;
+    }
+
+    .tungee-sample strong,
+    .tungee-sample span {
+      display: block;
+    }
+
+    .tungee-sample strong {
+      color: #263247;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .tungee-sample span {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .tungee-empty {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
     .company-section {
       padding-top: 18px;
     }
@@ -1148,7 +1276,7 @@
       </div>
       <div class="brand-copy">
         <h1>武汉写字楼租户质量分析</h1>
-        <p>31栋样本 · 2025超甲级17栋全覆盖 + 14栋补充样本 · 数据截至 2026-09-11</p>
+        <p>31栋样本 · 2025超甲级17栋全覆盖 + 14栋补充样本 · 探迹注册地址核查</p>
       </div>
     </div>
     <div class="top-actions">
@@ -1318,6 +1446,21 @@
             <p id="detailAuditNote"></p>
             <div class="source-links" id="detailSources"></div>
           </div>
+          <div class="tungee-audit">
+            <div class="tungee-heading">
+              <strong>探迹注册地址核查</strong>
+              <span class="tungee-confidence" id="detailTungeeConfidence">待核查</span>
+            </div>
+            <div class="tungee-stats">
+              <span>命中 <strong id="detailTungeeTotal">0</strong></span>
+              <span>已采集 <strong id="detailTungeeCaptured">0</strong></span>
+              <span id="detailTungeeDate">2026-09-11</span>
+            </div>
+            <p class="tungee-query" id="detailTungeeQuery"></p>
+            <p class="tungee-status" id="detailTungeeStatus"></p>
+            <p class="tungee-note" id="detailTungeeNote"></p>
+            <div class="tungee-samples" id="detailTungeeSamples"></div>
+          </div>
         </div>
 
         <section class="company-section">
@@ -1360,11 +1503,12 @@
   </main>
 
   <footer class="page-footer">
-    <strong>口径说明：</strong>本页覆盖2025年官方认定的17栋超甲级商务楼宇，并加入14栋补充样本，共31栋；这不是武汉全部写字楼名录，企业查询也不是完整租户名册。楼宇评分由租户能级、产业集聚、租户稳定、经济贡献、运营市场五项公开信号构成，属于讨论模型，不是资产估值。企业查询只收录可回溯样本；“公开规模”也可能采用注册企业、招商签约或片区口径，详情页已逐栋标注。样本证据等级只表示公开信息的可追溯程度，不直接改变评分。市场背景为 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260723_2824719.shtml" target="_blank" rel="noopener noreferrer">2026 年上半年武汉五大核心区甲级写字楼存量 350.1 万㎡、年内预计新增供应 25 万㎡</a>；全市 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260702_2816002.shtml" target="_blank" rel="noopener noreferrer">亿元纳税楼宇 120 余栋</a>。
+    <strong>口径说明：</strong>本页覆盖2025年官方认定的17栋超甲级商务楼宇，并加入14栋补充样本，共31栋；这不是武汉全部写字楼名录，企业查询也不是完整租户名册。楼宇评分由租户能级、产业集聚、租户稳定、经济贡献、运营市场五项公开信号构成，属于讨论模型，不是资产估值。企业查询只收录可回溯样本；“公开规模”也可能采用注册企业、招商签约或片区口径，详情页已逐栋标注。探迹数据仅作为第三方注册地址证据，不代表实际办公占用、经营状态或完整租户名册，也不直接改变评分。样本证据等级只表示公开信息的可追溯程度，不直接改变评分。市场背景为 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260723_2824719.shtml" target="_blank" rel="noopener noreferrer">2026 年上半年武汉五大核心区甲级写字楼存量 350.1 万㎡、年内预计新增供应 25 万㎡</a>；全市 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260702_2816002.shtml" target="_blank" rel="noopener noreferrer">亿元纳税楼宇 120 余栋</a>。
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="data/tungee-audit.js"></script>
   <script>
     const DIMENSIONS = [
       {
@@ -1502,7 +1646,7 @@
         status: "已投运",
         sample: "1家主用机构 / 税收18亿+",
         profile: "政策性金融机构占比高，2021年税收公开口径约18亿元，经济贡献维度处于第一梯队。",
-        coverage: "政府公开：国家开发银行湖北省分行为主要使用机构，2021年税收超过18亿元；税收可能为区级留存或全口径。",
+        coverage: "政府公开：国家开发银行湖北省分行为主要使用机构，2021年税收超过18亿元；税收可能为区级留存或全口径。探迹以“国开行大厦”和“国家开发银行大厦”检索均为0条，中北路108号结果对应多个其他楼宇，当前办公地址口径待复核。",
         scores: { level: 9.0, cluster: 8.5, stable: 9.5, contrib: 10.0, ops: 7.0 },
         companies: [
           { name: "国家开发银行湖北省分行", industry: "政策性金融", type: "省级分行", level: "中央金融机构" }
@@ -1617,12 +1761,12 @@
       {
         id: "financial-street",
         name: "金融街集团大厦",
-        area: "江汉 · 建设大道",
+        area: "江汉 · 兴业路（地址待复核）",
         district: "江汉区",
         status: "已投运",
         sample: "30余家企业 / 上市占比30%+",
         profile: "金融与专业服务企业密度高，近年引入生物科技、工业设备和数字能源上市公司。",
-        coverage: "湖北日报：现有企业30余家，上市企业占比超过30%，并列示万泰生物、阿特拉斯·科普柯、朗新集团；未披露出租率，相关表述已移除。",
+        coverage: "湖北日报：现有企业30余家，上市企业占比超过30%，并列示万泰生物、阿特拉斯·科普柯、朗新集团；未披露出租率，相关表述已移除。探迹“金融街集团大厦”0条，别名“金融街大厦”仅指向兴业路22/64号，原“建设大道”位置缺少佐证，待复核。",
         scores: { level: 8.0, cluster: 8.5, stable: 8.5, contrib: 8.0, ops: 8.5 },
         companies: [
           { name: "万泰生物", industry: "生物医药", type: "武汉机构", level: "上市公司" },
@@ -1770,12 +1914,12 @@
       {
         id: "poly",
         name: "保利国际中心",
-        area: "武昌 · 中南路",
-        district: "武昌区",
+        area: "东湖高新 · 关山大道",
+        district: "东湖高新区",
         status: "已投运",
         sample: "租户名单待补充",
-        profile: "2025年超甲级商务楼宇，位于中南路商务轴；公开结果暂未提供可回溯的企业名单。",
-        coverage: "三星电子武汉分公司记录缺少可回溯原始来源，已移出企业查询。",
+        profile: "2025年超甲级商务楼宇，位于关山大道商务片区；公开结果暂未提供可回溯的企业名单。",
+        coverage: "探迹名称检索前50条均指向关山大道332号保利国际中心；原“武昌·中南路”对应中南路99号保利文化广场/保利广场，属于同名项目混淆，已纠偏。三星电子武汉分公司记录缺少可回溯原始来源，仍不进入企业查询。",
         scores: { level: 7.0, cluster: 6.5, stable: 7.5, contrib: 6.5, ops: 7.0 },
         companies: []
       },
@@ -1922,7 +2066,7 @@
       cdb: {
         evidenceLevel: "单一来源",
         sourceKeys: ["tax2021"],
-        auditNote: "武汉市商务局确认国家开发银行湖北省分行为主要使用机构，并披露2021年税收超过18亿元；税收口径未细分。"
+        auditNote: "武汉市商务局确认国家开发银行湖北省分行为主要使用机构，并披露2021年税收超过18亿元；税收口径未细分。探迹楼名检索0条，中北路108号样本不能确认国开行办公地址，地址口径待复核。"
       },
       ruitong: {
         evidenceLevel: "单一来源",
@@ -2012,7 +2156,7 @@
       poly: {
         evidenceLevel: "待补充",
         sourceKeys: ["superA2025"],
-        auditNote: "超甲级名单确认楼宇等级；三星电子武汉分公司原始来源待补，已移出企业查询。"
+        auditNote: "超甲级名单确认楼宇等级；探迹地址纠偏显示项目位于关山大道332号，而非中南路99号保利文化广场。三星电子武汉分公司原始来源待补，已移出企业查询。"
       },
       caad: {
         evidenceLevel: "待补充",
@@ -2052,7 +2196,7 @@
       greenland: {
         evidenceLevel: "单一来源",
         sourceKeys: ["greenland"],
-        auditNote: "公开报道确认主塔已建成但仍在租赁或部分资产处置阶段，无具名租户。"
+        auditNote: "公开报道确认主塔已建成但仍在租赁或部分资产处置阶段，无具名租户。探迹“武汉绿地中心”0条，和平大道750号命中的是绿地国际金融城范围，不能直接视为主塔租户。"
       },
       "wuhan-center": {
         evidenceLevel: "待补充",
@@ -2065,6 +2209,19 @@
         auditNote: "2025年武汉超甲级商务楼宇名单确认长江证券大厦入选；具体租户名单缺公开来源。"
       }
     };
+
+    const TUNGEE_META = window.TUNGEE_META || {
+      capturedAt: "2026-09-11",
+      source: "探迹企业库注册地址检索",
+      limitation: "注册地址证据不等同于实际办公占用或完整租户名册，A级也只表示当前查询条件已完整采集。",
+      confidenceLegend: {
+        A: "A · 当前查询完整",
+        B: "B · 仅前50条",
+        C: "C · 范围或归属待复核",
+        X: "X · 无有效结果"
+      }
+    };
+    const TUNGEE_AUDIT = window.TUNGEE_AUDIT || {};
 
     const state = {
       weights: {},
@@ -2110,6 +2267,14 @@
       detailSourceCount: document.getElementById("detailSourceCount"),
       detailAuditNote: document.getElementById("detailAuditNote"),
       detailSources: document.getElementById("detailSources"),
+      detailTungeeConfidence: document.getElementById("detailTungeeConfidence"),
+      detailTungeeTotal: document.getElementById("detailTungeeTotal"),
+      detailTungeeCaptured: document.getElementById("detailTungeeCaptured"),
+      detailTungeeDate: document.getElementById("detailTungeeDate"),
+      detailTungeeQuery: document.getElementById("detailTungeeQuery"),
+      detailTungeeStatus: document.getElementById("detailTungeeStatus"),
+      detailTungeeNote: document.getElementById("detailTungeeNote"),
+      detailTungeeSamples: document.getElementById("detailTungeeSamples"),
       companySectionSubtitle: document.getElementById("companySectionSubtitle"),
       companySearch: document.getElementById("companySearch"),
       industryFilter: document.getElementById("industryFilter"),
@@ -2132,10 +2297,30 @@
       };
     }
 
+    function getTungeeAudit(buildingId) {
+      return TUNGEE_AUDIT[buildingId] || {
+        query: "未执行",
+        total: null,
+        captured: 0,
+        confidence: "X",
+        matchAddress: "未确认",
+        status: "无可确认结果",
+        note: "暂无探迹注册地址核查记录。",
+        companies: []
+      };
+    }
+
     function getEvidenceClass(level) {
       if (level === "已交叉验证") return "verified";
       if (level === "单一来源") return "single";
       return "insufficient";
+    }
+
+    function getTungeeConfidenceClass(level) {
+      if (level === "A") return "high";
+      if (level === "B") return "medium";
+      if (level === "C") return "low";
+      return "none";
     }
 
     function initializeWeights() {
@@ -2543,6 +2728,7 @@
       elements.companySectionSubtitle.textContent = "公开披露样本，不代表全部租户";
       elements.companyScope.textContent = building.name;
       renderSources(audit.sourceKeys);
+      renderTungeeAudit(building.id);
 
       elements.metricList.replaceChildren();
       DIMENSIONS.forEach((dimension) => {
@@ -2612,6 +2798,49 @@
         link.rel = "noopener noreferrer";
         link.textContent = source.label;
         elements.detailSources.appendChild(link);
+      });
+    }
+
+    function renderTungeeAudit(buildingId) {
+      const audit = getTungeeAudit(buildingId);
+      const confidenceLabel = TUNGEE_META.confidenceLegend[audit.confidence] || "待核查";
+
+      elements.detailTungeeConfidence.textContent = confidenceLabel;
+      elements.detailTungeeConfidence.className =
+        "tungee-confidence " + getTungeeConfidenceClass(audit.confidence);
+      elements.detailTungeeTotal.textContent = audit.total === null ? "未获取" : String(audit.total);
+      elements.detailTungeeCaptured.textContent = String(audit.captured);
+      elements.detailTungeeDate.textContent = TUNGEE_META.capturedAt + " 采集";
+      elements.detailTungeeQuery.textContent = "查询：" + audit.query + "；匹配地址：" + audit.matchAddress;
+      elements.detailTungeeStatus.textContent = audit.status;
+      elements.detailTungeeNote.textContent = audit.note;
+      elements.detailTungeeSamples.replaceChildren();
+
+      if (audit.companies.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "tungee-empty";
+        empty.textContent = "本次没有可确认的注册地址样本。";
+        elements.detailTungeeSamples.appendChild(empty);
+        return;
+      }
+
+      audit.companies.forEach((company) => {
+        const item = document.createElement("div");
+        item.className = "tungee-sample";
+
+        const name = document.createElement("strong");
+        name.textContent = company.name;
+
+        const address = document.createElement("span");
+        address.textContent = company.address;
+
+        const meta = document.createElement("span");
+        meta.textContent = company.established ? "成立日期：" + company.established : "";
+
+        item.appendChild(name);
+        item.appendChild(address);
+        if (meta.textContent) item.appendChild(meta);
+        elements.detailTungeeSamples.appendChild(item);
       });
     }
 
@@ -2718,12 +2947,24 @@
         "来源数量",
         "审计说明",
         "来源",
+        "探迹查询条件",
+        "探迹匹配地址",
+        "探迹命中数",
+        "探迹已采集数",
+        "探迹置信等级",
+        "探迹核查状态",
+        "探迹审计说明",
+        "探迹样本",
         "较基准"
       ];
 
       const rows = rankings.map((rank) => {
         const movement = originalRank[rank.building.id] - rank.rank;
         const audit = getAudit(rank.building.id);
+        const tungee = getTungeeAudit(rank.building.id);
+        const tungeeSamples = tungee.companies
+          .map((company) => company.name + "：" + company.address)
+          .join("；");
         const sourceLabels = audit.sourceKeys
           .map((key) => SOURCES[key] && SOURCES[key].label)
           .filter(Boolean)
@@ -2746,6 +2987,14 @@
           audit.sourceKeys.length,
           audit.auditNote,
           [sourceLabels, sourceUrls].filter(Boolean).join(" | "),
+          tungee.query,
+          tungee.matchAddress,
+          tungee.total === null ? "" : tungee.total,
+          tungee.captured,
+          TUNGEE_META.confidenceLegend[tungee.confidence] || tungee.confidence,
+          tungee.status,
+          tungee.note,
+          tungeeSamples,
           movement === 0 ? "0" : movement > 0 ? "+" + movement : String(movement)
         ];
       });
