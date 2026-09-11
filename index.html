@@ -1,0 +1,2645 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>武汉写字楼租户质量分析</title>
+  <style>
+    :root {
+      --bg: #f3f5f8;
+      --surface: #ffffff;
+      --surface-muted: #f8fafc;
+      --ink: #172033;
+      --muted: #667085;
+      --faint: #98a2b3;
+      --line: #d9e0e9;
+      --line-strong: #c8d1dd;
+      --accent: #1463cc;
+      --accent-soft: #eaf2ff;
+      --good: #137a45;
+      --good-soft: #e9f7ef;
+      --bad: #b42318;
+      --bad-soft: #fdeceb;
+      --warning: #936300;
+      --warning-soft: #fff6db;
+      --shadow: 0 18px 45px rgba(23, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #edf2f8 0, var(--bg) 210px),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    tr:focus-visible {
+      outline: 2px solid rgba(20, 99, 204, 0.42);
+      outline-offset: 2px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 68px;
+      padding: 12px 22px;
+      border-bottom: 1px solid rgba(200, 209, 221, 0.9);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      display: grid;
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border: 1px solid #bcd1ee;
+      border-radius: 7px;
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .brand-icon svg {
+      width: 21px;
+      height: 21px;
+      stroke-width: 2;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.25;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      overflow: hidden;
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 7px 11px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      color: #263247;
+      background: #fff;
+      cursor: pointer;
+      transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+    }
+
+    .button:hover {
+      border-color: #9fb3cf;
+      color: var(--accent);
+      background: #f7faff;
+    }
+
+    .button.primary {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .button.primary:hover {
+      border-color: #0d56b4;
+      color: #fff;
+      background: #0d56b4;
+    }
+
+    .button svg {
+      width: 16px;
+      height: 16px;
+      stroke-width: 2;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 292px minmax(620px, 1fr) 420px;
+      width: min(1920px, 100%);
+      min-height: calc(100vh - 69px);
+      margin: 0 auto;
+    }
+
+    .controls-panel,
+    .ranking-panel,
+    .detail-panel {
+      min-width: 0;
+      padding: 20px;
+    }
+
+    .controls-panel {
+      border-right: 1px solid var(--line);
+      background: rgba(248, 250, 252, 0.88);
+    }
+
+    .ranking-panel {
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .detail-panel {
+      background: #fbfcfe;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-heading h2,
+    .detail-title h2 {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.3;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+
+    .section-heading p,
+    .detail-title p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .section-chip {
+      display: inline-flex;
+      min-height: 25px;
+      align-items: center;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .control-section {
+      padding: 0 0 20px;
+      margin: 0 0 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .control-section:last-child {
+      padding-bottom: 0;
+      margin-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .weights-list {
+      display: grid;
+      gap: 13px;
+    }
+
+    .weight-row {
+      display: grid;
+      gap: 5px;
+    }
+
+    .weight-label {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .weight-label span:first-child {
+      color: #354258;
+      font-size: 13px;
+      font-weight: 620;
+    }
+
+    .weight-value {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 720;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 18px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px;
+      border-radius: 999px;
+      background: #d7e1ef;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 15px;
+      height: 15px;
+      margin-top: -5.5px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 1px #9bb9df;
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 4px;
+      border-radius: 999px;
+      background: #d7e1ef;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 11px;
+      height: 11px;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 1px #9bb9df;
+    }
+
+    .field {
+      position: relative;
+      display: grid;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .field-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .input-shell {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-shell svg {
+      position: absolute;
+      left: 10px;
+      width: 16px;
+      height: 16px;
+      color: var(--faint);
+      pointer-events: none;
+      stroke-width: 2;
+    }
+
+    .input-shell input {
+      width: 100%;
+      min-height: 38px;
+      padding: 8px 10px 8px 34px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .input-shell input::placeholder {
+      color: var(--faint);
+    }
+
+    select {
+      width: 100%;
+      min-height: 38px;
+      padding: 7px 30px 7px 10px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      color: var(--ink);
+      background-color: #fff;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .stat {
+      min-height: 72px;
+      padding: 10px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .stat-value {
+      display: block;
+      color: #22304a;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 740;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-label {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .ranking-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .ranking-toolbar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .link-button {
+      padding: 2px 0;
+      border: 0;
+      color: var(--accent);
+      background: transparent;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .link-button[hidden] {
+      display: none;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      scrollbar-color: #bbc7d8 transparent;
+      scrollbar-width: thin;
+    }
+
+    .ranking-table {
+      width: 100%;
+      min-width: 680px;
+      border-collapse: collapse;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ranking-table th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: 10px 6px;
+      border-bottom: 1px solid var(--line);
+      color: #556277;
+      background: #fbfcfe;
+      font-size: 11px;
+      font-weight: 680;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .ranking-table th:first-child,
+    .ranking-table th:nth-child(2) {
+      text-align: left;
+    }
+
+    .ranking-table td {
+      padding: 9px 6px;
+      border-bottom: 1px solid #edf0f4;
+      color: #2f3b4f;
+      text-align: right;
+      vertical-align: middle;
+    }
+
+    .ranking-table td:first-child,
+    .ranking-table td:nth-child(2) {
+      text-align: left;
+    }
+
+    .ranking-table tbody tr {
+      cursor: pointer;
+      transition: background 100ms ease, box-shadow 100ms ease;
+    }
+
+    .ranking-table tbody tr:hover {
+      background: #f6f9fd;
+    }
+
+    .ranking-table tbody tr.is-selected {
+      background: var(--accent-soft);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+
+    .ranking-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .rank-number {
+      width: 46px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .building-cell {
+      min-width: 168px;
+    }
+
+    .building-name {
+      display: block;
+      color: #172033;
+      font-weight: 680;
+      white-space: nowrap;
+    }
+
+    .building-area {
+      display: block;
+      margin-top: 2px;
+      color: var(--faint);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .score-main {
+      color: #0e4faa;
+      font-size: 15px;
+      font-weight: 760;
+    }
+
+    .score-cell {
+      color: #4a566b;
+    }
+
+    .sample-count {
+      color: #4a566b;
+    }
+
+    .delta {
+      display: inline-flex;
+      min-width: 34px;
+      justify-content: flex-end;
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .delta.up {
+      color: var(--good);
+    }
+
+    .delta.down {
+      color: var(--bad);
+    }
+
+    .delta.flat {
+      color: var(--faint);
+    }
+
+    .empty-table {
+      padding: 42px 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .detail-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .detail-title {
+      min-width: 0;
+    }
+
+    .detail-title h2 {
+      overflow-wrap: anywhere;
+      font-size: 20px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      flex: 0 0 auto;
+      min-height: 25px;
+      align-items: center;
+      padding: 3px 8px;
+      border: 1px solid #bdd9c8;
+      border-radius: 999px;
+      color: var(--good);
+      background: var(--good-soft);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .status-pill.warning {
+      border-color: #ead79a;
+      color: var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .status-pill.muted {
+      border-color: var(--line);
+      color: var(--muted);
+      background: var(--surface-muted);
+    }
+
+    .detail-badges {
+      display: flex;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .evidence-badge {
+      display: inline-flex;
+      min-height: 23px;
+      align-items: center;
+      padding: 2px 7px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--surface-muted);
+      font-size: 10px;
+      font-weight: 680;
+      white-space: nowrap;
+    }
+
+    .evidence-badge.verified {
+      border-color: #b8dbc6;
+      color: var(--good);
+      background: var(--good-soft);
+    }
+
+    .evidence-badge.single {
+      border-color: #ead79a;
+      color: var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .evidence-badge.insufficient {
+      border-color: #e1e5eb;
+      color: #667085;
+      background: #f2f4f7;
+    }
+
+    .score-summary {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 16px;
+      padding: 18px 0 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .score-big {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .score-big strong {
+      color: #0c4c9f;
+      font-size: 38px;
+      line-height: 1;
+      font-weight: 760;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-big span,
+    .rank-badge span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .rank-badge {
+      text-align: right;
+    }
+
+    .rank-badge strong {
+      display: block;
+      color: #263247;
+      font-size: 20px;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-list {
+      display: grid;
+      gap: 10px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) 36px;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .metric-name {
+      color: #4a566b;
+      font-size: 12px;
+    }
+
+    .metric-track {
+      height: 6px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e7ebf1;
+    }
+
+    .metric-fill {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: #2a70d0;
+    }
+
+    .metric-value {
+      color: #344054;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .profile-note {
+      padding: 14px 0 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .profile-note p {
+      margin: 0;
+      color: #4a566b;
+      font-size: 12px;
+    }
+
+    .profile-note .coverage {
+      margin-top: 7px;
+      color: var(--faint);
+      font-size: 11px;
+    }
+
+    .audit-note {
+      padding: 13px 0 15px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .audit-note-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
+    }
+
+    .audit-note-heading strong {
+      color: #344054;
+      font-size: 12px;
+    }
+
+    .source-count {
+      color: var(--muted);
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .audit-note p {
+      margin: 0;
+      color: #4a566b;
+      font-size: 11px;
+    }
+
+    .source-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 9px;
+      margin-top: 9px;
+    }
+
+    .source-links a,
+    .source-links span {
+      color: var(--accent);
+      font-size: 10px;
+      line-height: 1.4;
+      text-decoration: none;
+    }
+
+    .source-links span {
+      color: var(--muted);
+    }
+
+    .source-links a:hover {
+      text-decoration: underline;
+    }
+
+    .company-section {
+      padding-top: 18px;
+    }
+
+    .company-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 150px;
+      gap: 8px;
+      margin: 12px 0 10px;
+    }
+
+    .company-toolbar .input-shell {
+      min-width: 0;
+    }
+
+    .company-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 26px;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .company-table-wrap {
+      overflow: auto;
+      max-height: 390px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      scrollbar-color: #bbc7d8 transparent;
+      scrollbar-width: thin;
+    }
+
+    .company-table {
+      width: 100%;
+      min-width: 360px;
+      border-collapse: collapse;
+    }
+
+    .company-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 8px 7px;
+      border-bottom: 1px solid var(--line);
+      color: #667085;
+      background: #fbfcfe;
+      font-size: 11px;
+      font-weight: 680;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .company-table td {
+      padding: 9px 7px;
+      border-bottom: 1px solid #edf0f4;
+      color: #344054;
+      font-size: 12px;
+      vertical-align: top;
+    }
+
+    .company-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .company-name {
+      color: #172033;
+      font-weight: 650;
+    }
+
+    .company-type {
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .row-evidence {
+      display: block;
+      width: max-content;
+      margin-top: 4px;
+    }
+
+    .company-empty {
+      padding: 30px 10px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .page-footer {
+      width: min(1920px, 100%);
+      margin: 0 auto;
+      padding: 14px 22px 22px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(248, 250, 252, 0.88);
+      font-size: 11px;
+    }
+
+    .page-footer strong {
+      color: #4a566b;
+    }
+
+    .page-footer a {
+      color: #245da8;
+      text-decoration: none;
+    }
+
+    .page-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 50;
+      max-width: min(360px, calc(100vw - 40px));
+      padding: 10px 12px;
+      border: 1px solid #c9d8eb;
+      border-radius: 6px;
+      color: #1f3552;
+      background: #f4f8ff;
+      box-shadow: var(--shadow);
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1350px) {
+      .workspace {
+        grid-template-columns: 278px minmax(0, 1fr);
+      }
+
+      .ranking-panel {
+        border-right: 0;
+      }
+
+      .detail-panel {
+        grid-column: 1 / -1;
+        border-top: 1px solid var(--line);
+      }
+
+      .detail-panel {
+        padding-bottom: 28px;
+      }
+
+      .detail-content {
+        display: grid;
+        grid-template-columns: minmax(300px, 0.8fr) minmax(460px, 1.2fr);
+        align-items: start;
+        gap: 24px;
+      }
+
+      .detail-main {
+        min-width: 0;
+      }
+
+      .company-section {
+        min-width: 0;
+        padding-top: 0;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .topbar {
+        position: static;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        width: 100%;
+      }
+
+      .top-actions .button {
+        flex: 1 1 0;
+      }
+
+      .workspace {
+        display: block;
+      }
+
+      .ranking-table {
+        min-width: 0;
+      }
+
+      .ranking-table th:nth-child(n+3):nth-child(-n+8),
+      .ranking-table td:nth-child(n+3):nth-child(-n+8) {
+        display: none;
+      }
+
+      .controls-panel,
+      .ranking-panel,
+      .detail-panel {
+        padding: 18px 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .detail-content {
+        display: block;
+      }
+
+      .company-section {
+        padding-top: 18px;
+      }
+
+      .company-toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .page-footer {
+        padding-right: 16px;
+        padding-left: 16px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .brand p {
+        white-space: normal;
+      }
+
+      .top-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .controls-panel,
+      .ranking-panel,
+      .detail-panel {
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .score-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .rank-badge {
+        text-align: left;
+      }
+
+      .metric-row {
+        grid-template-columns: 64px minmax(0, 1fr) 34px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"></path>
+          <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path>
+          <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path>
+          <path d="M10 6h4"></path>
+          <path d="M10 10h4"></path>
+          <path d="M10 14h4"></path>
+          <path d="M10 18h4"></path>
+        </svg>
+      </div>
+      <div class="brand-copy">
+        <h1>武汉写字楼租户质量分析</h1>
+        <p>30栋楼宇 · 公开样本审计 · 数据截至 2026-09-11</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="button" id="resetWeightsButton" type="button">重置权重</button>
+      <button class="button primary" id="exportButton" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <path d="m7 10 5 5 5-5"></path>
+          <path d="M12 15V3"></path>
+        </svg>
+        导出当前排名
+      </button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="controls-panel">
+      <section class="control-section">
+        <div class="section-heading">
+          <div>
+            <h2>评分权重</h2>
+            <p>初始合计 100%</p>
+          </div>
+          <span class="section-chip" id="weightTotal">合计 100%</span>
+        </div>
+        <div class="weights-list" id="weightsList"></div>
+      </section>
+
+      <section class="control-section">
+        <div class="section-heading">
+          <div>
+            <h2>楼宇筛选</h2>
+            <p id="filterSummary">显示 30 / 30 栋</p>
+          </div>
+        </div>
+        <label class="field">
+          <span class="field-label">楼宇或区域</span>
+          <span class="input-shell">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.34-4.34"></path>
+            </svg>
+            <input id="buildingSearch" type="search" placeholder="搜索楼宇、片区或区">
+          </span>
+        </label>
+        <label class="field">
+          <span class="field-label">行政区</span>
+          <select id="districtFilter"></select>
+        </label>
+        <label class="field">
+          <span class="field-label">运营状态</span>
+          <select id="statusFilter"></select>
+        </label>
+        <label class="field">
+          <span class="field-label">样本证据</span>
+          <select id="evidenceFilter"></select>
+        </label>
+      </section>
+
+      <section class="control-section">
+        <div class="section-heading">
+          <div>
+            <h2>样本概览</h2>
+            <p>按企业样本可追溯程度统计</p>
+          </div>
+          <span class="section-chip" id="companyRecordCount">0 条公开记录</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat">
+            <span class="stat-value" id="statBuildingCount">30</span>
+            <span class="stat-label">纳入楼宇</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="statVerifiedCount">0</span>
+            <span class="stat-label">已交叉验证</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="statSingleSourceCount">0</span>
+            <span class="stat-label">单一来源</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="statInsufficientCount">0</span>
+            <span class="stat-label">待补充</span>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="ranking-panel">
+      <div class="section-heading">
+        <div>
+          <h2>加权排名</h2>
+          <p id="rankingSummary">按当前权重排序</p>
+        </div>
+        <span class="section-chip" id="visibleCount">30 栋</span>
+      </div>
+      <div class="ranking-toolbar">
+        <p>相对基准排名变化</p>
+        <button class="link-button" id="clearFiltersButton" type="button" hidden>清除筛选</button>
+      </div>
+      <div class="table-wrap">
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>楼宇</th>
+              <th>能级</th>
+              <th>集聚</th>
+              <th>稳定</th>
+              <th>贡献</th>
+              <th>运营</th>
+              <th>公开规模</th>
+              <th>加权总分</th>
+              <th>较基准</th>
+            </tr>
+          </thead>
+          <tbody id="rankingBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="detail-panel">
+      <div class="detail-content">
+        <div class="detail-main" id="detailMain">
+          <div class="detail-title-row">
+            <div class="detail-title">
+              <h2 id="detailName">平安金融中心大厦</h2>
+              <p id="detailArea">江岸 · 武汉天地</p>
+            </div>
+            <div class="detail-badges">
+              <span class="status-pill" id="detailStatus">已投运</span>
+              <span class="evidence-badge verified" id="detailEvidenceBadge">已交叉验证</span>
+            </div>
+          </div>
+
+          <div class="score-summary">
+            <div class="score-big">
+              <strong id="detailScore">9.45</strong>
+              <span>加权总分</span>
+            </div>
+            <div class="rank-badge">
+              <strong id="detailRank">#1</strong>
+              <span>当前排名</span>
+            </div>
+          </div>
+
+          <div class="metric-list" id="metricList"></div>
+          <div class="profile-note">
+            <p id="detailProfile"></p>
+            <p class="coverage" id="detailCoverage"></p>
+          </div>
+          <div class="audit-note">
+            <div class="audit-note-heading">
+              <strong>数据审计</strong>
+              <span class="source-count" id="detailSourceCount">0 个来源</span>
+            </div>
+            <p id="detailAuditNote"></p>
+            <div class="source-links" id="detailSources"></div>
+          </div>
+        </div>
+
+        <section class="company-section">
+          <div class="section-heading">
+            <div>
+              <h2>楼内企业查询</h2>
+              <p id="companySectionSubtitle">公开披露样本，不代表全部租户</p>
+            </div>
+          </div>
+          <div class="company-toolbar">
+            <span class="input-shell">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.34-4.34"></path>
+              </svg>
+              <input id="companySearch" type="search" placeholder="搜索企业名称、行业或级别">
+            </span>
+            <select id="industryFilter" aria-label="行业筛选"></select>
+          </div>
+          <div class="company-meta">
+            <span id="companyResultMeta">0 条记录</span>
+            <span id="companyScope">当前楼宇</span>
+          </div>
+          <div class="company-table-wrap">
+            <table class="company-table">
+              <thead>
+                <tr>
+                  <th>企业或机构</th>
+                  <th>行业</th>
+                  <th>类型</th>
+                  <th>级别</th>
+                </tr>
+              </thead>
+              <tbody id="companyBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="page-footer">
+    <strong>口径说明：</strong>楼宇评分由租户能级、产业集聚、租户稳定、经济贡献、运营市场五项公开信号构成，属于讨论模型，不是资产估值。企业查询只收录政府通报、开发商/物业披露和公开报道中可追溯的样本，不代表完整租户名册；“公开规模”也可能采用注册企业、招商签约或片区口径，详情页已逐栋标注。样本证据等级只表示公开信息的可追溯程度，不直接改变评分。市场背景为 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260723_2824719.shtml" target="_blank" rel="noopener noreferrer">2026 Q2 武汉五大核心区甲级写字楼存量 350.1 万㎡、预计新增供应 25 万㎡</a>；全市 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260702_2816002.shtml" target="_blank" rel="noopener noreferrer">亿元纳税楼宇 120 余栋</a>。
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const DIMENSIONS = [
+      {
+        key: "level",
+        label: "租户能级",
+        short: "能级",
+        initial: 30,
+        hint: "总部、世界500强、领馆与头部机构密度"
+      },
+      {
+        key: "cluster",
+        label: "产业集聚",
+        short: "集聚",
+        initial: 20,
+        hint: "金融、医药、科技、航运等产业链集中度"
+      },
+      {
+        key: "stable",
+        label: "租户稳定",
+        short: "稳定",
+        initial: 20,
+        hint: "自用、总部型、长租和专业机构占比"
+      },
+      {
+        key: "contrib",
+        label: "经济贡献",
+        short: "贡献",
+        initial: 20,
+        hint: "税收、产值、注册企业与经济密度"
+      },
+      {
+        key: "ops",
+        label: "运营市场",
+        short: "运营",
+        initial: 10,
+        hint: "硬件等级、物业、出租表现与市场活跃度"
+      }
+    ];
+
+    const SOURCES = {
+      market2026: {
+        label: "武汉市政府：2026年上半年写字楼市场",
+        url: "https://www.wuhan.gov.cn/sy/whyw/202607/t20260723_2824719.shtml"
+      },
+      cityTax2026: {
+        label: "武汉市政府：120余栋亿元楼及重点楼宇租户披露",
+        url: "https://www.wuhan.gov.cn/sy/whyw/202607/t20260702_2816002.shtml"
+      },
+      tax2021: {
+        label: "武汉市商务局：2021年亿元楼宇通报",
+        url: "https://sw.wuhan.gov.cn/xwdt/gzdt/202201/t20220112_1894112.shtml"
+      },
+      superA2025: {
+        label: "湖北日报/荆楚网：2025武汉超甲级写字楼名单",
+        url: "http://news.cnhubei.com/content/2025-12/19/content_19734985.html"
+      },
+      k11: {
+        label: "硚口区官方发布：武汉 K11 ATELIER 企业样本",
+        url: "http://qiankouqu.app.dawuhanapp.com/p/5457.html"
+      },
+      alibaba: {
+        label: "湖北日报：武汉阿里中心开园",
+        url: "https://news.hubeidaily.net/pc/c_4681832.html"
+      },
+      yuexiuIfc: {
+        label: "武汉市投资促进局：越秀国际金融中心招商进展",
+        url: "https://tc.wuhan.gov.cn/tzwh/tzzx/202607/t20260728_2826214.shtml"
+      },
+      financialStreet: {
+        label: "湖北日报：金融街集团大厦企业结构",
+        url: "https://news.hubeidaily.net/pc/c_4817129.html"
+      },
+      guangming: {
+        label: "汉阳区政府：武汉光明中心重点企业",
+        url: "https://www.hanyang.gov.cn/xwdt_38/hyyw/202401/t20240104_2335461.shtml"
+      },
+      usConsulate: {
+        label: "美国驻华使领馆：美国驻武汉总领事馆地址",
+        url: "https://china.usembassy-china.org.cn/zh/embassy-consulates-zh/wuhan-zh/"
+      },
+      softwareCity: {
+        label: "武汉市商务局：武汉软件新城企业与就业规模",
+        url: "https://sw.wuhan.gov.cn/xwdt/gzdt/202303/t20230320_2172066.shtml"
+      },
+      greenland: {
+        label: "21世纪经济报道：武汉绿地中心资产处置",
+        url: "https://m.21jingji.com/article/20260814/herald/35130a4b6b0a76ac9dbc97a0883c6b3a.html"
+      },
+      wuhanCenter: {
+        label: "观点网：武汉中心大厦开发主体重整",
+        url: "https://www.guandian.cn/article/20260828/593378.html"
+      },
+      registryAggregate: {
+        label: "第三方企业登记聚合口径，未逐户复核",
+        url: ""
+      },
+      propertyDisclosure: {
+        label: "项目业主/物业公开招商资料",
+        url: ""
+      }
+    };
+
+    const BUILDINGS = [
+      {
+        id: "pingan",
+        name: "平安金融中心大厦",
+        area: "江岸 · 武汉天地",
+        district: "江岸区",
+        status: "已投运",
+        sample: "77家机构 / 15家500强",
+        profile: "世界500强分支机构和涉外机构密度高，是武汉天地商务集群的核心样本。",
+        coverage: "政府公开：2012年启用时披露77家机构、15家世界500强；税收连续14年超过10亿元。企业样本属于历史披露，需按最新租约复核。",
+        scores: { level: 9.5, cluster: 9.0, stable: 9.5, contrib: 10.0, ops: 9.0 },
+        companies: [
+          { name: "平安人寿湖北公司", industry: "保险", type: "省级机构", level: "世界500强子公司" },
+          { name: "三菱银行", industry: "银行", type: "武汉机构", level: "世界500强" },
+          { name: "东亚银行", industry: "银行", type: "武汉机构", level: "港资银行" },
+          { name: "三井物产", industry: "综合商社", type: "武汉机构", level: "世界500强" },
+          { name: "甲骨文", industry: "企业软件", type: "武汉机构", level: "世界500强" },
+          { name: "惠普", industry: "IT设备与服务", type: "武汉机构", level: "世界500强" },
+          { name: "百胜", industry: "餐饮连锁", type: "武汉机构", level: "世界500强" },
+          { name: "英国驻武汉总领事馆", industry: "政府与公共机构", type: "领事机构", level: "外国驻汉机构" },
+          { name: "澳门特区政府驻武汉招商办", industry: "政府与公共机构", type: "招商机构", level: "境外驻汉机构" }
+        ]
+      },
+      {
+        id: "tiandi1",
+        name: "企业天地1号",
+        area: "江岸 · 二七滨江",
+        district: "江岸区",
+        status: "已投运",
+        sample: "100+家企业 / 10家500强",
+        profile: "外资专业服务、航运和保险机构集中，国际商务属性突出。",
+        coverage: "政府公开：入驻企业超过100家，披露世界500强企业10家；法国驻武汉总领事馆说法未获同一来源支持，已移除。",
+        scores: { level: 9.0, cluster: 8.5, stable: 9.0, contrib: 9.5, ops: 9.0 },
+        companies: [
+          { name: "亚马逊", industry: "电子商务与云计算", type: "武汉机构", level: "世界500强" },
+          { name: "欧莱雅", industry: "消费品", type: "武汉机构", level: "世界500强" },
+          { name: "中国人寿", industry: "保险", type: "武汉机构", level: "世界500强" },
+          { name: "中远海运", industry: "航运物流", type: "武汉机构", level: "中央企业" },
+          { name: "同方全球人寿", industry: "保险", type: "武汉机构", level: "中外合资" },
+          { name: "WeWork", industry: "共享办公", type: "运营品牌", level: "联合办公运营商" }
+        ]
+      },
+      {
+        id: "cdb",
+        name: "国开行大厦",
+        area: "武昌 · 华中金融城",
+        district: "武昌区",
+        status: "已投运",
+        sample: "1家主用机构 / 税收18亿+",
+        profile: "政策性金融机构占比高，2021年税收公开口径约18亿元，经济贡献维度处于第一梯队。",
+        coverage: "政府公开：国家开发银行湖北省分行为主要使用机构，2021年税收超过18亿元；税收可能为区级留存或全口径。",
+        scores: { level: 9.0, cluster: 8.5, stable: 9.5, contrib: 10.0, ops: 7.0 },
+        companies: [
+          { name: "国家开发银行湖北省分行", industry: "政策性金融", type: "省级分行", level: "中央金融机构" }
+        ]
+      },
+      {
+        id: "ruitong",
+        name: "瑞通广场",
+        area: "江汉 · 建设大道",
+        district: "江汉区",
+        status: "已投运",
+        sample: "3家公开租户 / 税收18亿+",
+        profile: "建设大道金融街核心楼宇，金融产业集聚与税收贡献突出，但专业化运营和硬件信息披露较少。",
+        coverage: "政府公开：交通银行湖北省分行、交银信托、太平洋人寿保险为主要公开租户；2021年税收超过18亿元。",
+        scores: { level: 8.5, cluster: 8.5, stable: 9.0, contrib: 10.0, ops: 7.0 },
+        companies: [
+          { name: "交通银行湖北省分行", industry: "银行", type: "省级分行", level: "国有大型银行" },
+          { name: "交银信托", industry: "信托", type: "武汉机构", level: "交通银行系" },
+          { name: "太平洋人寿保险", industry: "保险", type: "武汉机构", level: "头部保险机构" }
+        ]
+      },
+      {
+        id: "yuexiu-wealth",
+        name: "越秀财富中心",
+        area: "硚口 · 中山大道",
+        district: "硚口区",
+        status: "已投运",
+        sample: "110+家企业 / 强企占比75%+",
+        profile: "世界500强、软件服务与医疗科技并存，产业梯队兼顾能级和成长性。",
+        coverage: "公开披露：入驻企业超过110家，世界500强、行业百强及龙头占比超过75%；旧口径“23家世界500强”已停用。",
+        scores: { level: 9.0, cluster: 8.5, stable: 9.0, contrib: 8.5, ops: 8.5 },
+        companies: [
+          { name: "PSA", industry: "汽车与出行", type: "武汉机构", level: "世界500强" },
+          { name: "SAP", industry: "企业软件", type: "武汉机构", level: "世界500强" },
+          { name: "葛洲坝", industry: "能源建设", type: "区域机构", level: "中央企业" },
+          { name: "云尚", industry: "数字时尚与产业互联网", type: "武汉机构", level: "公开披露企业" },
+          { name: "推想医疗", industry: "医疗科技", type: "武汉机构", level: "独角兽" }
+        ]
+      },
+      {
+        id: "zhonghai",
+        name: "武汉中海中心",
+        area: "江汉 · 青年路",
+        district: "江汉区",
+        status: "已投运",
+        sample: "4家可核实租户",
+        profile: "金融业占比接近四成，银行、保险、咨询和跨国企业形成较完整的专业服务链。",
+        coverage: "公开披露：招商银行、上海医药、中粮期货及普华永道武汉分所可核实；NTT、SK及中国平安未被当前来源支持，已移除。",
+        scores: { level: 9.0, cluster: 8.5, stable: 9.0, contrib: 8.0, ops: 8.5 },
+        companies: [
+          { name: "招商银行", industry: "银行", type: "武汉机构", level: "全国性股份制银行" },
+          { name: "上海医药", industry: "医药流通与制造", type: "武汉机构", level: "上市公司" },
+          { name: "中粮期货", industry: "期货与金融", type: "武汉机构", level: "中央企业子公司" },
+          { name: "普华永道武汉分所", industry: "专业服务", type: "武汉分所", level: "国际会计网络" }
+        ]
+      },
+      {
+        id: "k11",
+        name: "武汉 K11 ATELIER",
+        area: "硚口 · 解放大道",
+        district: "硚口区",
+        status: "已投运",
+        sample: "6家可核实租户",
+        profile: "医药健康和金融外资租户集中，生命科学产业链特征明显。",
+        coverage: "官方公开：默沙东、武田制药、罗氏诊断、汇丰银行、百济神州、远大医药均可核实。",
+        scores: { level: 8.5, cluster: 9.0, stable: 9.0, contrib: 7.5, ops: 8.5 },
+        companies: [
+          { name: "默沙东", industry: "医药", type: "武汉机构", level: "世界500强" },
+          { name: "武田制药", industry: "医药", type: "武汉机构", level: "世界500强" },
+          { name: "罗氏诊断", industry: "医疗诊断", type: "武汉机构", level: "世界500强" },
+          { name: "汇丰银行", industry: "银行", type: "武汉机构", level: "世界500强" },
+          { name: "百济神州", industry: "生物医药", type: "武汉机构", level: "上市公司" },
+          { name: "远大医药", industry: "医药", type: "武汉机构", level: "上市公司" }
+        ]
+      },
+      {
+        id: "alibaba",
+        name: "武汉阿里中心",
+        area: "武昌 · 滨江数创走廊",
+        district: "武昌区",
+        status: "已投运",
+        sample: "华中总部 / 多个业务集团",
+        profile: "阿里巴巴华中总部带动数字经济业务板块集中入驻，属于单一龙头牵引型楼宇。",
+        coverage: "官方报道：阿里巴巴华中总部于2025年10月22日开园；业务集团清单属于同一企业体系，不按独立租户重复计算。",
+        scores: { level: 8.5, cluster: 8.0, stable: 8.5, contrib: 7.5, ops: 9.0 },
+        companies: [
+          { name: "阿里巴巴", industry: "互联网平台", type: "华中总部", level: "世界500强" },
+          { name: "淘天集团", industry: "电子商务", type: "业务板块", level: "阿里体系" },
+          { name: "阿里云", industry: "云计算", type: "业务板块", level: "阿里体系" },
+          { name: "阿里国际数字商业集团", industry: "跨境电商", type: "业务板块", level: "阿里体系" }
+        ]
+      },
+      {
+        id: "henglong",
+        name: "武汉恒隆广场",
+        area: "硚口 · 京汉大道",
+        district: "硚口区",
+        status: "已投运",
+        sample: "10+家500强 / 1家公开租户",
+        profile: "高端商业综合体中的办公产品，世界及中国500强与金融机构共同构成主要租户。",
+        coverage: "公开披露：逾10家世界及中国500强；浦发银行总行科技发展部武汉研发中心可核实，其余租户未具名。",
+        scores: { level: 8.5, cluster: 8.0, stable: 8.5, contrib: 8.0, ops: 8.5 },
+        companies: [
+          { name: "浦发银行总行科技发展部武汉研发中心", industry: "银行科技", type: "研发中心", level: "全国性股份制银行" }
+        ]
+      },
+      {
+        id: "financial-street",
+        name: "金融街集团大厦",
+        area: "江汉 · 建设大道",
+        district: "江汉区",
+        status: "已投运",
+        sample: "36家企业 / 上市占比30%+",
+        profile: "金融与专业服务企业密度高，近年引入生物科技上市公司，出租表现处于区域前列。",
+        coverage: "官方报道：现有企业约36家，上市公司占比超过30%，出租率接近70%；万泰生物可核实，平安、中国银行旧样本已被移除。",
+        scores: { level: 8.0, cluster: 8.5, stable: 8.5, contrib: 8.0, ops: 8.5 },
+        companies: [
+          { name: "万泰生物", industry: "生物医药", type: "武汉机构", level: "上市公司" }
+        ]
+      },
+      {
+        id: "yuexiu-ifc",
+        name: "越秀国际金融中心",
+        area: "江汉 · 精武路",
+        district: "江汉区",
+        status: "已投运",
+        sample: "首年招引56家 / 10+家500强",
+        profile: "新交付高品质楼宇，招商速度快，世界500强、金融机构和酒店品牌共同提升综合能级。",
+        coverage: "政府公开：首年招引56家企业，其中世界500强及上市头部机构超过10家；丽思卡尔顿酒店已签约。",
+        scores: { level: 8.5, cluster: 8.0, stable: 8.5, contrib: 7.5, ops: 9.0 },
+        companies: [
+          { name: "丽思卡尔顿", industry: "酒店", type: "签约品牌", level: "万豪集团" }
+        ]
+      },
+      {
+        id: "zall",
+        name: "卓尔国际中心",
+        area: "江汉 · 建设大道",
+        district: "江汉区",
+        status: "已投运",
+        sample: "约70%金融/保险/律所",
+        profile: "金融、保险和法律专业服务机构占比约七成，LEED铂金认证增强运营市场表现。",
+        coverage: "公开招商资料仅提供约70%为银行总部、金融、保险和律所类租户的比例，当前无可回溯具体企业名称。",
+        scores: { level: 8.0, cluster: 8.5, stable: 8.0, contrib: 8.5, ops: 8.5 },
+        companies: []
+      },
+      {
+        id: "minsheng-financial",
+        name: "民生金融中心",
+        area: "江汉 · 武汉CBD",
+        district: "江汉区",
+        status: "已投运",
+        sample: "80+家企业 / 5家可核实租户",
+        profile: "跨国制造、能源和银行企业并存，体现了CBD甲级楼宇的综合商务属性。",
+        coverage: "项目物业公开：入驻企业超过80家；壳牌能源、三菱电机、戴尔、出光润滑油、渤海银行可核实。",
+        scores: { level: 8.5, cluster: 8.0, stable: 8.0, contrib: 7.5, ops: 8.0 },
+        companies: [
+          { name: "壳牌能源", industry: "能源", type: "武汉机构", level: "世界500强" },
+          { name: "三菱电机", industry: "工业电气", type: "武汉机构", level: "世界500强" },
+          { name: "戴尔", industry: "IT设备与服务", type: "武汉机构", level: "世界500强" },
+          { name: "出光润滑油", industry: "化工与能源", type: "武汉机构", level: "日资企业" },
+          { name: "渤海银行", industry: "银行", type: "武汉机构", level: "全国性股份制银行" }
+        ]
+      },
+      {
+        id: "newworld",
+        name: "新世界国贸大厦",
+        area: "江汉 · 建设大道",
+        district: "江汉区",
+        status: "已投运",
+        sample: "未披露可核实规模",
+        profile: "武汉首批5A甲级写字楼之一，世界500强和政府机构历史租户基础较强，但楼龄较高。",
+        coverage: "历史租户结构有公开提及，但当前无法回溯具体企业名单和最新租约，暂不作为已验证样本。",
+        scores: { level: 8.0, cluster: 7.5, stable: 8.0, contrib: 8.0, ops: 6.5 },
+        companies: []
+      },
+      {
+        id: "changjiang-industry",
+        name: "长江产业大厦",
+        area: "武昌 · 中北路",
+        district: "武昌区",
+        status: "已投运",
+        sample: "集团总部自用",
+        profile: "省属产业投资集团总部基地，自用属性强，租户稳定性高但市场化和产业密度仍待释放。",
+        coverage: "长江产业投资集团总部自用；集团所属基金、投资与实体板块不作为独立租户重复计数。",
+        scores: { level: 8.0, cluster: 7.0, stable: 9.0, contrib: 7.5, ops: 6.5 },
+        companies: [
+          { name: "长江产业投资集团", industry: "投资控股", type: "总部基地", level: "省属国企" }
+        ]
+      },
+      {
+        id: "greatwall",
+        name: "长城汇",
+        area: "武昌 · 中北路",
+        district: "武昌区",
+        status: "已投运",
+        sample: "80+家企业 / 3家公开租户",
+        profile: "央企贸易、台资银行和保险机构构成主要租户，商务结构相对均衡。",
+        coverage: "公开招商资料披露入驻企业超过80家；三条具体企业记录尚缺可回溯官方来源，证据等级暂降为待补充。",
+        scores: { level: 7.5, cluster: 7.5, stable: 8.0, contrib: 7.5, ops: 7.5 },
+        companies: [
+          { name: "中粮贸易湖北公司", industry: "大宗商品与贸易", type: "区域公司", level: "中央企业" },
+          { name: "富邦华一银行", industry: "银行", type: "武汉机构", level: "台资银行" },
+          { name: "友邦保险", industry: "保险", type: "武汉机构", level: "世界500强" }
+        ]
+      },
+      {
+        id: "guangming",
+        name: "武汉光明中心",
+        area: "汉阳 · 四新",
+        district: "汉阳区",
+        status: "已投运",
+        sample: "3家可核实租户",
+        profile: "建筑央企专业公司和零售区域总部组合，是汉阳四新片区商务能级较高的样本。",
+        coverage: "政府公开：中建三局钢构科技有限公司、屈臣氏武汉总部、中铁十一局房地产开发公司可核实；南华期货未被当前来源支持，已移除。",
+        scores: { level: 7.5, cluster: 7.5, stable: 8.0, contrib: 7.0, ops: 8.0 },
+        companies: [
+          { name: "中建三局钢构科技有限公司", industry: "建筑科技", type: "专业公司", level: "中央企业子公司" },
+          { name: "中铁十一局房地产开发公司", industry: "房地产开发", type: "专业公司", level: "中央企业子公司" },
+          { name: "屈臣氏武汉总部", industry: "零售", type: "区域总部", level: "长和系" }
+        ]
+      },
+      {
+        id: "minsheng-building",
+        name: "民生银行大厦",
+        area: "江汉 · 新华路",
+        district: "江汉区",
+        status: "已投运",
+        sample: "1家可核实机构",
+        profile: "美国驻武汉总领事馆带来稳定的涉外公共服务属性，楼宇位于金融街核心区位。",
+        coverage: "美国驻华使领馆官网确认领事馆现址为民生银行大厦6层；MFG记录缺少同类官方来源，暂不列为可核实租户。",
+        scores: { level: 7.5, cluster: 7.5, stable: 8.0, contrib: 7.5, ops: 6.5 },
+        companies: [
+          { name: "美国驻武汉总领事馆", industry: "政府与公共机构", type: "领事机构", level: "美国驻汉机构" }
+        ]
+      },
+      {
+        id: "carbon",
+        name: "碳汇大厦",
+        area: "武昌 · 碳金融集聚区",
+        district: "武昌区",
+        status: "已投运",
+        sample: "碳金融特色集群",
+        profile: "全国碳市场和碳金融相关机构形成特色产业标签，产业集聚分高于综合能级。",
+        coverage: "“中碳科技”记录尚未回溯至可公开访问的原始来源，当前仅保留为待补充样本，不参与高置信度统计。",
+        scores: { level: 7.0, cluster: 8.0, stable: 7.5, contrib: 7.0, ops: 7.5 },
+        companies: [
+          { name: "中碳科技", industry: "碳资产与低碳技术", type: "专业机构", level: "待来源复核" }
+        ]
+      },
+      {
+        id: "vanke",
+        name: "万科未来中心",
+        area: "汉阳 · 汉阳大道",
+        district: "汉阳区",
+        status: "已投运",
+        sample: "37家企业（登记口径）",
+        profile: "数字经济特色楼宇，世界500强区域总部和独角兽企业带来成长性，但稳定性仍需沉淀。",
+        coverage: "公开招商资料提到37家企业和500强/独角兽构成，但未披露具体名称，当前无可查询租户。",
+        scores: { level: 7.0, cluster: 7.0, stable: 6.5, contrib: 6.5, ops: 8.0 },
+        companies: []
+      },
+      {
+        id: "poly",
+        name: "保利国际中心",
+        area: "武昌 · 中南路",
+        district: "武昌区",
+        status: "已投运",
+        sample: "1家公开租户",
+        profile: "外资制造和专业服务机构为主，商务区位成熟，但公开企业样本披露有限。",
+        coverage: "公开记录提到三星电子武汉分公司，但原始来源链接待补，暂按单一低置信度样本处理。",
+        scores: { level: 7.0, cluster: 6.5, stable: 7.5, contrib: 6.5, ops: 7.0 },
+        companies: [
+          { name: "三星电子武汉分公司", industry: "消费电子", type: "武汉分公司", level: "世界500强" }
+        ]
+      },
+      {
+        id: "caad",
+        name: "CAAD 财富中心",
+        area: "江汉 · 武汉CBD",
+        district: "江汉区",
+        status: "已投运",
+        sample: "无具名租户",
+        profile: "超甲级硬件和CBD门户位置具备吸引力，但招商材料只给出匿名业态案例。",
+        coverage: "招商材料仅出现“某国有银行省分行”“某四大会计师事务所”等匿名案例，不能作为具体企业租户呈现。",
+        scores: { level: 6.5, cluster: 7.0, stable: 7.0, contrib: 6.5, ops: 7.0 },
+        companies: []
+      },
+      {
+        id: "xiangyang",
+        name: "襄阳大厦",
+        area: "武昌 · 中北路",
+        district: "武昌区",
+        status: "已投运",
+        sample: "1家配套品牌",
+        profile: "酒店与甲级办公组合，2023年交付，区域机构为主，租户能级仍在爬坡。",
+        coverage: "万豪酒店作为配套品牌有公开记录；“区域机构”缺少具体名称，已移除。",
+        scores: { level: 6.5, cluster: 6.0, stable: 7.0, contrib: 6.0, ops: 7.5 },
+        companies: [
+          { name: "万豪酒店", industry: "酒店", type: "配套品牌", level: "国际酒店集团" }
+        ]
+      },
+      {
+        id: "shipping",
+        name: "长江航运中心",
+        area: "江汉 · 沿江大道",
+        district: "江汉区",
+        status: "已投运",
+        sample: "一公里岸线约300家企业（片区口径）",
+        profile: "一公里岸线集聚约300家航运企业，片区产业集聚强，但并非楼内租户数量。",
+        coverage: "公开披露：一公里岸线约300家航运企业，属于片区承载口径；楼内仅IHG洲至奢选酒店为已公开签约品牌。",
+        scores: { level: 6.0, cluster: 6.5, stable: 7.0, contrib: 6.0, ops: 6.5 },
+        companies: [
+          { name: "IHG洲至奢选酒店", industry: "酒店", type: "签约项目", level: "洲际酒店集团" }
+        ]
+      },
+      {
+        id: "merchants",
+        name: "招商时代总部 B 栋",
+        area: "青山",
+        district: "青山区",
+        status: "已投运",
+        sample: "约299家注册企业（登记口径）",
+        profile: "青山楼宇经济的重要载体，注册企业数量可观，但租户结构和头部企业披露有限。",
+        coverage: "公开资料采用注册企业约299家的口径，不代表全部实体办公；具体名称未公开，当前无可查询租户。",
+        scores: { level: 6.0, cluster: 6.0, stable: 6.5, contrib: 6.0, ops: 6.5 },
+        companies: []
+      },
+      {
+        id: "software-park",
+        name: "光谷软件园",
+        area: "洪山 · 关山（园区）",
+        district: "洪山区",
+        status: "已投运",
+        sample: "73万平方米（园区口径）",
+        profile: "73万平方米园区型产品，产业集聚突出，科技租户基础强，但楼宇型运营和税收贡献口径不同。",
+        coverage: "园区建筑面积73万平方米可核实；“华为入驻光谷软件园”当前无对应来源支持，已移除。",
+        scores: { level: 7.0, cluster: 8.5, stable: 7.0, contrib: 5.5, ops: 7.0 },
+        companies: []
+      },
+      {
+        id: "financial-port",
+        name: "光谷金融港",
+        area: "江夏 · 光谷大道（园区）",
+        district: "江夏区",
+        status: "已投运",
+        sample: "1,831家企业（工商登记聚合）",
+        profile: "金融后台和科技金融企业集聚，园区型产品在经济贡献可比性上弱于甲级写字楼。",
+        coverage: "第三方企业登记聚合显示1,831家，未逐户复核且包含注册口径；具体名称披露有限，当前无可查询租户。",
+        scores: { level: 6.5, cluster: 7.5, stable: 6.5, contrib: 5.5, ops: 7.0 },
+        companies: []
+      },
+      {
+        id: "software-city",
+        name: "武汉软件新城",
+        area: "东湖高新 · 花山（园区）",
+        district: "东湖高新区",
+        status: "已投运",
+        sample: "200+家企业 / 2万人",
+        profile: "软件与信息服务园区，世界500强陆续入驻，产业成长性强但租户稳定性仍需观察。",
+        coverage: "政府公开：园区入驻企业超过200家、从业人员超过2万人；IBM、飞利浦、软通动力可核实。",
+        scores: { level: 6.5, cluster: 7.5, stable: 6.5, contrib: 5.0, ops: 7.0 },
+        companies: [
+          { name: "IBM", industry: "信息技术与服务", type: "园区机构", level: "世界500强" },
+          { name: "飞利浦", industry: "医疗科技与健康", type: "园区机构", level: "世界500强" },
+          { name: "软通动力", industry: "软件与信息服务", type: "园区机构", level: "上市公司" }
+        ]
+      },
+      {
+        id: "greenland",
+        name: "武汉绿地中心",
+        area: "武昌 · 滨江",
+        district: "武昌区",
+        status: "部分投用",
+        sample: "0",
+        profile: "主塔已建成并进入部分投用/招商阶段，未形成广泛运营；部分酒店资产处于司法处置阶段。",
+        coverage: "暂无公开披露的具体企业租户名单，企业查询结果为空。",
+        scores: { level: 3.0, cluster: 2.5, stable: 3.0, contrib: 2.0, ops: 3.0 },
+        companies: []
+      },
+      {
+        id: "wuhan-center",
+        name: "武汉中心大厦",
+        area: "江汉 · 王家墩CBD",
+        district: "江汉区",
+        status: "未投运",
+        sample: "0",
+        profile: "项目未通过验收且从未投用，开发主体武汉中心大厦开发投资有限公司已进入重整程序，不具备租户质量比较基础。",
+        coverage: "暂无公开租户名单，企业查询结果为空。",
+        scores: { level: 0, cluster: 0, stable: 0, contrib: 0, ops: 0 },
+        companies: []
+      }
+    ];
+
+    const DATA_AUDIT = {
+      pingan: {
+        evidenceLevel: "已交叉验证",
+        sourceKeys: ["cityTax2026", "tax2021", "superA2025"],
+        auditNote: "政府来源披露77家机构、15家世界500强及连续14年税收超10亿元；超甲级名单交叉验证楼宇等级。企业名单为2012年前后历史披露，最新租约仍可能存在变化。"
+      },
+      tiandi1: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["cityTax2026", "superA2025"],
+        auditNote: "政府来源确认100余家企业、10家世界500强及具名企业；已移除未获该来源支持的法国领事馆和友邦保险样本。"
+      },
+      cdb: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["tax2021"],
+        auditNote: "武汉市商务局确认国家开发银行湖北省分行为主要使用机构，并披露2021年税收超过18亿元；税收口径未细分。"
+      },
+      ruitong: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["tax2021"],
+        auditNote: "武汉市商务局披露交通银行湖北省分行、交银信托、太平洋人寿保险及2021年税收超过18亿元。"
+      },
+      "yuexiu-wealth": {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["propertyDisclosure", "superA2025"],
+        auditNote: "公开资料更新为110余家企业，500强、行业百强及龙头占比超过75%；旧“23家500强”口径已失效。"
+      },
+      zhonghai: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["propertyDisclosure", "superA2025"],
+        auditNote: "招商银行、上海医药、中粮期货及普华永道武汉分所可核实；NTT、SK和中国平安缺少当前来源支持，已移除。"
+      },
+      k11: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["k11", "superA2025"],
+        auditNote: "硚口区官方发布确认6家医药与金融租户；超甲级名单佐证楼宇等级，不代表租户名册完整。"
+      },
+      alibaba: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["alibaba"],
+        auditNote: "湖北日报确认华中总部开园；淘天、阿里云等属于同一集团业务板块，不按独立租户重复计算。"
+      },
+      henglong: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["propertyDisclosure", "superA2025"],
+        auditNote: "公开资料支持10家以上世界及中国500强，浦发银行研发中心可核实；其余企业未具名。"
+      },
+      "financial-street": {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["financialStreet", "superA2025"],
+        auditNote: "官方报道支持约36家企业、上市公司占比超过30%和出租率接近70%；旧平安、中国银行样本已被移除。"
+      },
+      "yuexiu-ifc": {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["yuexiuIfc", "superA2025"],
+        auditNote: "政府招商来源确认首年招引56家、10家以上500强及上市头部机构；除丽思卡尔顿外，其余租户未具名。"
+      },
+      zall: {
+        evidenceLevel: "待补充",
+        sourceKeys: ["propertyDisclosure"],
+        auditNote: "仅有约70%金融、保险、律所租户的比例信息，无可回溯具体企业名称，组合样本已移除。"
+      },
+      "minsheng-financial": {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["propertyDisclosure"],
+        auditNote: "项目物业资料支持80余家企业及5个具名租户；具体名单时点和完整度仍待更新。"
+      },
+      newworld: {
+        evidenceLevel: "待补充",
+        sourceKeys: [],
+        auditNote: "历史项目资料提及世界500强及政府机构，但无法回溯当前具体租户，暂不纳入高置信样本。"
+      },
+      "changjiang-industry": {
+        evidenceLevel: "待补充",
+        sourceKeys: [],
+        auditNote: "集团总部自用属性明确，但公开企业名单仅覆盖集团自身，缺少可独立核验的市场租户信息。"
+      },
+      greatwall: {
+        evidenceLevel: "待补充",
+        sourceKeys: ["superA2025"],
+        auditNote: "超甲级名单确认楼宇等级，但80余家企业及三条租户记录缺少可回溯原始来源，证据等级下调。"
+      },
+      guangming: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["guangming", "superA2025"],
+        auditNote: "汉阳区政府确认3家租户；南华期货缺少支持，已移除。"
+      },
+      "minsheng-building": {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["usConsulate"],
+        auditNote: "美国驻华使领馆官网确认领事馆位于6层；MFG缺少同类官方来源，已从可查询租户中移除。"
+      },
+      carbon: {
+        evidenceLevel: "待补充",
+        sourceKeys: [],
+        auditNote: "中碳科技记录尚未回溯到原始来源，仅保留为待复核样本，不纳入高置信企业数量。"
+      },
+      vanke: {
+        evidenceLevel: "待补充",
+        sourceKeys: ["superA2025"],
+        auditNote: "超甲级名单确认楼宇等级；37家企业、500强和独角兽均为聚合描述，未有具名租户。"
+      },
+      poly: {
+        evidenceLevel: "待补充",
+        sourceKeys: ["superA2025"],
+        auditNote: "超甲级名单确认楼宇等级；三星电子武汉分公司原始来源待补，暂按低置信单一样本处理。"
+      },
+      caad: {
+        evidenceLevel: "待补充",
+        sourceKeys: ["superA2025"],
+        auditNote: "超甲级名单确认楼宇等级；招商稿只有匿名金融机构和会计师事务所案例，不能转写为具体租户名称。"
+      },
+      xiangyang: {
+        evidenceLevel: "待补充",
+        sourceKeys: ["superA2025"],
+        auditNote: "超甲级名单确认楼宇等级；万豪酒店为配套品牌，办公租户缺少具体名称。"
+      },
+      shipping: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["propertyDisclosure"],
+        auditNote: "约300家航运企业为一公里岸线片区口径，不是楼内租户；IHG洲至奢选酒店为签约品牌。"
+      },
+      merchants: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["propertyDisclosure", "superA2025"],
+        auditNote: "约299家采用注册企业口径，是否全部实际办公未披露；当前无可查询具名租户。"
+      },
+      "software-park": {
+        evidenceLevel: "待补充",
+        sourceKeys: [],
+        auditNote: "73万平方米建筑面积可核实，但未找到可回溯的在园企业名单；华为样本已移除。"
+      },
+      "financial-port": {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["registryAggregate"],
+        auditNote: "1,831家来自第三方企业登记聚合，包含注册口径且未逐户复核，不作为完整实体办公租户数量。"
+      },
+      "software-city": {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["softwareCity"],
+        auditNote: "武汉市商务局确认200余家企业、2万余名从业人员，并列示IBM、飞利浦、软通动力。"
+      },
+      greenland: {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["greenland"],
+        auditNote: "公开报道确认主塔已建成但仍在租赁/部分资产处置阶段，酒楼层于2026年进入司法拍卖程序；无具名租户。"
+      },
+      "wuhan-center": {
+        evidenceLevel: "单一来源",
+        sourceKeys: ["wuhanCenter"],
+        auditNote: "重整主体为项目开发公司武汉中心大厦开发投资有限公司，不是泛指母公司；项目仍不具备租户比较基础。"
+      }
+    };
+
+    const state = {
+      weights: {},
+      selectedId: "pingan",
+      buildingQuery: "",
+      district: "全部",
+      status: "全部",
+      evidence: "全部",
+      companyQuery: "",
+      industry: "全部"
+    };
+
+    const elements = {
+      weightsList: document.getElementById("weightsList"),
+      weightTotal: document.getElementById("weightTotal"),
+      buildingSearch: document.getElementById("buildingSearch"),
+      districtFilter: document.getElementById("districtFilter"),
+      statusFilter: document.getElementById("statusFilter"),
+      evidenceFilter: document.getElementById("evidenceFilter"),
+      filterSummary: document.getElementById("filterSummary"),
+      clearFiltersButton: document.getElementById("clearFiltersButton"),
+      statBuildingCount: document.getElementById("statBuildingCount"),
+      statVerifiedCount: document.getElementById("statVerifiedCount"),
+      statSingleSourceCount: document.getElementById("statSingleSourceCount"),
+      statInsufficientCount: document.getElementById("statInsufficientCount"),
+      companyRecordCount: document.getElementById("companyRecordCount"),
+      rankingSummary: document.getElementById("rankingSummary"),
+      visibleCount: document.getElementById("visibleCount"),
+      rankingBody: document.getElementById("rankingBody"),
+      detailName: document.getElementById("detailName"),
+      detailArea: document.getElementById("detailArea"),
+      detailStatus: document.getElementById("detailStatus"),
+      detailScore: document.getElementById("detailScore"),
+      detailRank: document.getElementById("detailRank"),
+      metricList: document.getElementById("metricList"),
+      detailProfile: document.getElementById("detailProfile"),
+      detailCoverage: document.getElementById("detailCoverage"),
+      detailEvidenceBadge: document.getElementById("detailEvidenceBadge"),
+      detailSourceCount: document.getElementById("detailSourceCount"),
+      detailAuditNote: document.getElementById("detailAuditNote"),
+      detailSources: document.getElementById("detailSources"),
+      companySectionSubtitle: document.getElementById("companySectionSubtitle"),
+      companySearch: document.getElementById("companySearch"),
+      industryFilter: document.getElementById("industryFilter"),
+      companyResultMeta: document.getElementById("companyResultMeta"),
+      companyScope: document.getElementById("companyScope"),
+      companyBody: document.getElementById("companyBody"),
+      resetWeightsButton: document.getElementById("resetWeightsButton"),
+      exportButton: document.getElementById("exportButton"),
+      toast: document.getElementById("toast")
+    };
+
+    const originalRank = {};
+    const weightInputs = {};
+
+    function getAudit(buildingId) {
+      return DATA_AUDIT[buildingId] || {
+        evidenceLevel: "待补充",
+        sourceKeys: [],
+        auditNote: "暂无独立审计记录。"
+      };
+    }
+
+    function getEvidenceClass(level) {
+      if (level === "已交叉验证") return "verified";
+      if (level === "单一来源") return "single";
+      return "insufficient";
+    }
+
+    function initializeWeights() {
+      DIMENSIONS.forEach((dimension) => {
+        state.weights[dimension.key] = dimension.initial;
+
+        const row = document.createElement("label");
+        row.className = "weight-row";
+        row.title = dimension.hint;
+
+        const label = document.createElement("span");
+        label.className = "weight-label";
+
+        const name = document.createElement("span");
+        name.textContent = dimension.label;
+
+        const value = document.createElement("span");
+        value.className = "weight-value";
+        value.id = "weight-value-" + dimension.key;
+        value.textContent = dimension.initial + "%";
+
+        const input = document.createElement("input");
+        input.type = "range";
+        input.min = "0";
+        input.max = "60";
+        input.step = "1";
+        input.value = String(dimension.initial);
+        input.setAttribute("aria-label", dimension.label + "权重");
+        input.addEventListener("input", () => {
+          state.weights[dimension.key] = Number(input.value);
+          renderAll();
+        });
+
+        label.appendChild(name);
+        label.appendChild(value);
+        row.appendChild(label);
+        row.appendChild(input);
+        elements.weightsList.appendChild(row);
+        weightInputs[dimension.key] = { input, value };
+      });
+    }
+
+    function initializeFilters() {
+      const districts = ["全部", ...Array.from(new Set(BUILDINGS.map((building) => building.district)))];
+      const statuses = ["全部", ...Array.from(new Set(BUILDINGS.map((building) => building.status)))];
+      const evidenceLevels = ["全部", "已交叉验证", "单一来源", "待补充"];
+
+      districts.forEach((district) => {
+        const option = document.createElement("option");
+        option.value = district;
+        option.textContent = district;
+        elements.districtFilter.appendChild(option);
+      });
+
+      statuses.forEach((status) => {
+        const option = document.createElement("option");
+        option.value = status;
+        option.textContent = status;
+        elements.statusFilter.appendChild(option);
+      });
+
+      evidenceLevels.forEach((level) => {
+        const option = document.createElement("option");
+        option.value = level;
+        option.textContent = level;
+        elements.evidenceFilter.appendChild(option);
+      });
+
+      elements.buildingSearch.addEventListener("input", () => {
+        state.buildingQuery = elements.buildingSearch.value.trim().toLowerCase();
+        renderRankings();
+      });
+
+      elements.districtFilter.addEventListener("change", () => {
+        state.district = elements.districtFilter.value;
+        renderRankings();
+      });
+
+      elements.statusFilter.addEventListener("change", () => {
+        state.status = elements.statusFilter.value;
+        renderRankings();
+      });
+
+      elements.evidenceFilter.addEventListener("change", () => {
+        state.evidence = elements.evidenceFilter.value;
+        renderRankings();
+      });
+
+      elements.clearFiltersButton.addEventListener("click", () => {
+        state.buildingQuery = "";
+        state.district = "全部";
+        state.status = "全部";
+        state.evidence = "全部";
+        elements.buildingSearch.value = "";
+        elements.districtFilter.value = "全部";
+        elements.statusFilter.value = "全部";
+        elements.evidenceFilter.value = "全部";
+        renderRankings();
+      });
+
+      elements.companySearch.addEventListener("input", () => {
+        state.companyQuery = elements.companySearch.value.trim().toLowerCase();
+        renderCompanies();
+      });
+
+      elements.industryFilter.addEventListener("change", () => {
+        state.industry = elements.industryFilter.value;
+        renderCompanies();
+      });
+    }
+
+    function getWeightTotal() {
+      return DIMENSIONS.reduce((total, dimension) => total + state.weights[dimension.key], 0);
+    }
+
+    function getNormalizedWeight(key) {
+      const total = getWeightTotal();
+      return total > 0 ? (state.weights[key] / total) * 100 : 0;
+    }
+
+    function scoreBuilding(building) {
+      const total = getWeightTotal();
+      if (total <= 0) return 0;
+      return DIMENSIONS.reduce((score, dimension) => {
+        return score + building.scores[dimension.key] * state.weights[dimension.key];
+      }, 0) / total;
+    }
+
+    function getRankedBuildings() {
+      return BUILDINGS
+        .map((building, index) => ({
+          building,
+          originalIndex: index,
+          score: scoreBuilding(building)
+        }))
+        .sort((left, right) => {
+          if (right.score !== left.score) return right.score - left.score;
+          return left.originalIndex - right.originalIndex;
+        })
+        .map((entry, index) => ({
+          ...entry,
+          rank: index + 1
+        }));
+    }
+
+    function getFilteredRankings(rankings) {
+      const query = state.buildingQuery;
+      return rankings.filter(({ building }) => {
+        const matchesQuery = !query || [
+          building.name,
+          building.area,
+          building.district,
+          building.status,
+          building.profile,
+          getAudit(building.id).evidenceLevel,
+          getAudit(building.id).auditNote
+        ].some((value) => value.toLowerCase().includes(query));
+        const matchesDistrict = state.district === "全部" || building.district === state.district;
+        const matchesStatus = state.status === "全部" || building.status === state.status;
+        const audit = getAudit(building.id);
+        const matchesEvidence = state.evidence === "全部" || audit.evidenceLevel === state.evidence;
+        return matchesQuery && matchesDistrict && matchesStatus && matchesEvidence;
+      });
+    }
+
+    function initializeOriginalRanks() {
+      const baseline = BUILDINGS
+        .map((building, index) => ({
+          building,
+          originalIndex: index,
+          score: DIMENSIONS.reduce((sum, dimension) => {
+            return sum + building.scores[dimension.key] * dimension.initial;
+          }, 0) / DIMENSIONS.reduce((sum, dimension) => sum + dimension.initial, 0)
+        }))
+        .sort((left, right) => {
+          if (right.score !== left.score) return right.score - left.score;
+          return left.originalIndex - right.originalIndex;
+        });
+
+      baseline.forEach((entry, index) => {
+        originalRank[entry.building.id] = index + 1;
+      });
+    }
+
+    function renderWeights() {
+      const total = getWeightTotal();
+      elements.weightTotal.textContent = total > 0 ? "合计 100%" : "权重为 0";
+
+      DIMENSIONS.forEach((dimension) => {
+        const controls = weightInputs[dimension.key];
+        controls.input.value = String(state.weights[dimension.key]);
+        controls.value.textContent = Math.round(getNormalizedWeight(dimension.key)) + "%";
+      });
+    }
+
+    function renderStats() {
+      const counts = { "已交叉验证": 0, "单一来源": 0, "待补充": 0 };
+      let companyCount = 0;
+
+      BUILDINGS.forEach((building) => {
+        const audit = getAudit(building.id);
+        counts[audit.evidenceLevel] = (counts[audit.evidenceLevel] || 0) + 1;
+        companyCount += building.companies.length;
+      });
+
+      elements.statBuildingCount.textContent = String(BUILDINGS.length);
+      elements.statVerifiedCount.textContent = String(counts["已交叉验证"]);
+      elements.statSingleSourceCount.textContent = String(counts["单一来源"]);
+      elements.statInsufficientCount.textContent = String(counts["待补充"]);
+      elements.companyRecordCount.textContent = companyCount + " 条公开记录";
+    }
+
+    function createDelta(rank) {
+      const selectedRank = rank.rank;
+      const selectedOriginal = originalRank[rank.building.id];
+      const movement = selectedOriginal - selectedRank;
+      const span = document.createElement("span");
+      span.className = "delta " + (movement > 0 ? "up" : movement < 0 ? "down" : "flat");
+      span.textContent = movement === 0 ? "0" : movement > 0 ? "↑ " + movement : "↓ " + Math.abs(movement);
+      return span;
+    }
+
+    function renderRankings() {
+      const rankings = getRankedBuildings();
+      const filtered = getFilteredRankings(rankings);
+      const hasFilters = Boolean(state.buildingQuery)
+        || state.district !== "全部"
+        || state.status !== "全部"
+        || state.evidence !== "全部";
+
+      elements.filterSummary.textContent = "显示 " + filtered.length + " / " + BUILDINGS.length + " 栋";
+      elements.visibleCount.textContent = filtered.length + " 栋";
+      elements.clearFiltersButton.hidden = !hasFilters;
+
+      const selectedWeightParts = DIMENSIONS.map((dimension) => {
+        return dimension.short + " " + Math.round(getNormalizedWeight(dimension.key)) + "%";
+      });
+      elements.rankingSummary.textContent = selectedWeightParts.join(" · ");
+
+      elements.rankingBody.replaceChildren();
+
+      if (filtered.length === 0) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 10;
+        cell.className = "empty-table";
+        cell.textContent = "没有符合条件的楼宇";
+        row.appendChild(cell);
+        elements.rankingBody.appendChild(row);
+        return;
+      }
+
+      filtered.forEach((rank) => {
+        const building = rank.building;
+        const audit = getAudit(building.id);
+        const row = document.createElement("tr");
+        row.tabIndex = 0;
+        row.dataset.id = building.id;
+        row.classList.toggle("is-selected", building.id === state.selectedId);
+        row.setAttribute("aria-selected", building.id === state.selectedId ? "true" : "false");
+        row.title = building.profile;
+        row.addEventListener("click", () => selectBuilding(building.id));
+        row.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            selectBuilding(building.id);
+          }
+        });
+
+        const rankCell = document.createElement("td");
+        rankCell.className = "rank-number";
+        rankCell.textContent = String(rank.rank);
+
+        const nameCell = document.createElement("td");
+        nameCell.className = "building-cell";
+        const name = document.createElement("span");
+        name.className = "building-name";
+        name.textContent = building.name;
+        const area = document.createElement("span");
+        area.className = "building-area";
+        area.textContent = building.area;
+        const evidence = document.createElement("span");
+        evidence.className = "evidence-badge row-evidence " + getEvidenceClass(audit.evidenceLevel);
+        evidence.textContent = audit.evidenceLevel;
+        nameCell.appendChild(name);
+        nameCell.appendChild(area);
+        nameCell.appendChild(evidence);
+
+        row.appendChild(rankCell);
+        row.appendChild(nameCell);
+
+        DIMENSIONS.forEach((dimension) => {
+          const cell = document.createElement("td");
+          cell.className = "score-cell";
+          cell.textContent = building.scores[dimension.key].toFixed(1);
+          row.appendChild(cell);
+        });
+
+        const sampleCell = document.createElement("td");
+        sampleCell.className = "sample-count";
+        sampleCell.textContent = building.sample;
+
+        const scoreCell = document.createElement("td");
+        scoreCell.className = "score-main";
+        scoreCell.textContent = rank.score.toFixed(2);
+
+        const deltaCell = document.createElement("td");
+        deltaCell.appendChild(createDelta(rank));
+
+        row.appendChild(sampleCell);
+        row.appendChild(scoreCell);
+        row.appendChild(deltaCell);
+        elements.rankingBody.appendChild(row);
+      });
+    }
+
+    function selectBuilding(id) {
+      state.selectedId = id;
+      state.companyQuery = "";
+      state.industry = "全部";
+      renderRankings();
+      renderDetail();
+    }
+
+    function renderDetail() {
+      const rankings = getRankedBuildings();
+      const rankEntry = rankings.find((entry) => entry.building.id === state.selectedId) || rankings[0];
+      const building = rankEntry.building;
+      const audit = getAudit(building.id);
+
+      state.selectedId = building.id;
+      elements.detailName.textContent = building.name;
+      elements.detailArea.textContent = building.area + " · " + building.district;
+      elements.detailStatus.textContent = building.status;
+      elements.detailStatus.className = "status-pill";
+      if (building.status === "招商中" || building.status === "部分投用") elements.detailStatus.classList.add("warning");
+      if (building.status === "未投运") elements.detailStatus.classList.add("muted");
+      elements.detailEvidenceBadge.textContent = audit.evidenceLevel;
+      elements.detailEvidenceBadge.className = "evidence-badge " + getEvidenceClass(audit.evidenceLevel);
+      elements.detailScore.textContent = rankEntry.score.toFixed(2);
+      elements.detailRank.textContent = "#" + rankEntry.rank;
+      elements.detailProfile.textContent = building.profile;
+      elements.detailCoverage.textContent = building.coverage;
+      elements.detailAuditNote.textContent = audit.auditNote;
+      elements.companySectionSubtitle.textContent = "公开披露样本，不代表全部租户";
+      elements.companyScope.textContent = building.name;
+      renderSources(audit.sourceKeys);
+
+      elements.metricList.replaceChildren();
+      DIMENSIONS.forEach((dimension) => {
+        const row = document.createElement("div");
+        row.className = "metric-row";
+
+        const name = document.createElement("span");
+        name.className = "metric-name";
+        name.textContent = dimension.label;
+
+        const track = document.createElement("span");
+        track.className = "metric-track";
+        const fill = document.createElement("span");
+        fill.className = "metric-fill";
+        fill.style.width = Math.max(0, Math.min(100, building.scores[dimension.key] * 10)) + "%";
+        track.appendChild(fill);
+
+        const value = document.createElement("span");
+        value.className = "metric-value";
+        value.textContent = building.scores[dimension.key].toFixed(1);
+
+        row.appendChild(name);
+        row.appendChild(track);
+        row.appendChild(value);
+        elements.metricList.appendChild(row);
+      });
+
+      elements.companySearch.value = state.companyQuery;
+      const industries = ["全部", ...Array.from(new Set(building.companies.map((company) => company.industry)))];
+      elements.industryFilter.replaceChildren();
+      industries.forEach((industry) => {
+        const option = document.createElement("option");
+        option.value = industry;
+        option.textContent = industry;
+        elements.industryFilter.appendChild(option);
+      });
+      elements.industryFilter.value = industries.includes(state.industry) ? state.industry : "全部";
+      state.industry = elements.industryFilter.value;
+      renderCompanies();
+    }
+
+    function renderSources(sourceKeys) {
+      elements.detailSources.replaceChildren();
+      elements.detailSourceCount.textContent = sourceKeys.length + " 个来源";
+
+      if (sourceKeys.length === 0) {
+        const empty = document.createElement("span");
+        empty.textContent = "暂无可回溯公开来源";
+        elements.detailSources.appendChild(empty);
+        return;
+      }
+
+      sourceKeys.forEach((key) => {
+        const source = SOURCES[key];
+        if (!source) return;
+
+        if (!source.url) {
+          const label = document.createElement("span");
+          label.textContent = source.label;
+          elements.detailSources.appendChild(label);
+          return;
+        }
+
+        const link = document.createElement("a");
+        link.href = source.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = source.label;
+        elements.detailSources.appendChild(link);
+      });
+    }
+
+    function getVisibleCompanies() {
+      const building = BUILDINGS.find((item) => item.id === state.selectedId);
+      if (!building) return [];
+      return building.companies.filter((company) => {
+        const haystack = [
+          company.name,
+          company.industry,
+          company.type,
+          company.level
+        ].join(" ").toLowerCase();
+        const matchesQuery = !state.companyQuery || haystack.includes(state.companyQuery);
+        const matchesIndustry = state.industry === "全部" || company.industry === state.industry;
+        return matchesQuery && matchesIndustry;
+      });
+    }
+
+    function renderCompanies() {
+      const building = BUILDINGS.find((item) => item.id === state.selectedId);
+      const companies = getVisibleCompanies();
+      elements.companyBody.replaceChildren();
+
+      if (!building || companies.length === 0) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 4;
+        cell.className = "company-empty";
+        if (!building || building.companies.length === 0) {
+          cell.textContent = "该楼宇暂无公开披露的具体企业名单";
+        } else {
+          cell.textContent = "没有匹配的企业记录";
+        }
+        row.appendChild(cell);
+        elements.companyBody.appendChild(row);
+      } else {
+        companies.forEach((company) => {
+          const row = document.createElement("tr");
+
+          const name = document.createElement("td");
+          name.className = "company-name";
+          name.textContent = company.name;
+
+          const industry = document.createElement("td");
+          industry.textContent = company.industry;
+
+          const type = document.createElement("td");
+          type.className = "company-type";
+          type.textContent = company.type;
+
+          const level = document.createElement("td");
+          level.textContent = company.level;
+
+          row.appendChild(name);
+          row.appendChild(industry);
+          row.appendChild(type);
+          row.appendChild(level);
+          elements.companyBody.appendChild(row);
+        });
+      }
+
+      const total = building ? building.companies.length : 0;
+      elements.companyResultMeta.textContent = "显示 " + companies.length + " / " + total + " 条具名公开样本";
+    }
+
+    function renderAll() {
+      renderWeights();
+      renderRankings();
+      renderDetail();
+    }
+
+    function showToast(message) {
+      elements.toast.textContent = message;
+      elements.toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => {
+        elements.toast.classList.remove("show");
+      }, 2200);
+    }
+
+    function csvCell(value) {
+      const text = String(value);
+      if (/[",\n]/.test(text)) {
+        return '"' + text.replace(/"/g, '""') + '"';
+      }
+      return text;
+    }
+
+    function exportCurrentRanking() {
+      const rankings = getFilteredRankings(getRankedBuildings());
+      const header = [
+        "排名",
+        "楼宇",
+        "区域",
+        "行政区",
+        "状态",
+        ...DIMENSIONS.map((dimension) => dimension.label + "权重"),
+        ...DIMENSIONS.map((dimension) => dimension.label),
+        "加权总分",
+        "公开规模",
+        "样本证据等级",
+        "来源数量",
+        "审计说明",
+        "来源",
+        "较基准"
+      ];
+
+      const rows = rankings.map((rank) => {
+        const movement = originalRank[rank.building.id] - rank.rank;
+        const audit = getAudit(rank.building.id);
+        const sourceLabels = audit.sourceKeys
+          .map((key) => SOURCES[key] && SOURCES[key].label)
+          .filter(Boolean)
+          .join("；");
+        const sourceUrls = audit.sourceKeys
+          .map((key) => SOURCES[key] && SOURCES[key].url)
+          .filter(Boolean)
+          .join("；");
+        return [
+          rank.rank,
+          rank.building.name,
+          rank.building.area,
+          rank.building.district,
+          rank.building.status,
+          ...DIMENSIONS.map((dimension) => Math.round(getNormalizedWeight(dimension.key)) + "%"),
+          ...DIMENSIONS.map((dimension) => rank.building.scores[dimension.key].toFixed(1)),
+          rank.score.toFixed(2),
+          rank.building.sample,
+          audit.evidenceLevel,
+          audit.sourceKeys.length,
+          audit.auditNote,
+          [sourceLabels, sourceUrls].filter(Boolean).join(" | "),
+          movement === 0 ? "0" : movement > 0 ? "+" + movement : String(movement)
+        ];
+      });
+
+      const csv = "\ufeff" + [header, ...rows]
+        .map((row) => row.map(csvCell).join(","))
+        .join("\n");
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "武汉写字楼租户质量排名_20260911.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast("已导出 " + rankings.length + " 栋楼宇的当前排名");
+    }
+
+    elements.resetWeightsButton.addEventListener("click", () => {
+      DIMENSIONS.forEach((dimension) => {
+        state.weights[dimension.key] = dimension.initial;
+      });
+      renderAll();
+      showToast("权重已恢复为基准模型");
+    });
+
+    elements.exportButton.addEventListener("click", exportCurrentRanking);
+
+    initializeWeights();
+    initializeFilters();
+    initializeOriginalRanks();
+    renderWeights();
+    renderStats();
+    renderRankings();
+    renderDetail();
+  </script>
+</body>
+</html>
