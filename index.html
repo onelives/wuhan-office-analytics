@@ -1835,7 +1835,7 @@
         status: "已投运",
         sample: "规模与租户名单待补充",
         profile: "园区型产品，产业集聚属性突出，科技租户基础较强，但楼宇型运营和税收贡献口径不同。",
-        coverage: "原“73万平方米”和“华为入驻光谷软件园”记录缺少可回溯来源，均不进入可核实统计。",
+        coverage: "武汉软件新城运营方2023年回顾称，2006至2011年光谷软件园曾引进IBM、华为、泛亚班拿、软通动力和中软国际；因属于历史阶段且当前在园状态未披露，暂不列为当前租户样本。原“73万平方米”仍缺少可回溯来源。",
         scores: { level: 7.0, cluster: 8.5, stable: 7.0, contrib: 5.5, ops: 7.0 },
         companies: []
       },
@@ -1859,12 +1859,15 @@
         status: "已投运",
         sample: "200+家企业 / 2万人",
         profile: "软件与信息服务园区，世界500强陆续入驻，产业成长性强但租户稳定性仍需观察。",
-        coverage: "政府公开：园区入驻企业超过200家、从业人员超过2万人；IBM、飞利浦、软通动力可核实。",
+        coverage: "政府公开：园区入驻企业超过200家、从业人员超过2万人；IBM、飞利浦、软通动力、明源云、中软国际、佰钧成可核实。",
         scores: { level: 6.5, cluster: 7.5, stable: 6.5, contrib: 5.0, ops: 7.0 },
         companies: [
           { name: "IBM", industry: "信息技术与服务", type: "园区机构", level: "世界500强" },
           { name: "飞利浦", industry: "医疗科技与健康", type: "园区机构", level: "世界500强" },
-          { name: "软通动力", industry: "软件与信息服务", type: "园区机构", level: "上市公司" }
+          { name: "软通动力", industry: "软件与信息服务", type: "园区机构", level: "上市公司" },
+          { name: "明源云", industry: "企业软件", type: "园区机构", level: "港股上市公司" },
+          { name: "中软国际", industry: "软件与信息服务", type: "园区机构", level: "港股上市公司" },
+          { name: "佰钧成", industry: "软件与信息服务", type: "园区机构", level: "公开披露企业" }
         ]
       },
       {
@@ -2033,8 +2036,8 @@
       },
       "software-park": {
         evidenceLevel: "待补充",
-        sourceKeys: [],
-        auditNote: "73万平方米建筑面积来源未保留可回溯链接，在园企业名单缺失；华为样本已移除。"
+        sourceKeys: ["softwareCity"],
+        auditNote: "武汉软件新城运营方回顾确认光谷软件园历史阶段曾引进IBM、华为、泛亚班拿、软通动力和中软国际；当前在园状态未披露，故不列为当前租户样本。73万平方米来源仍待补。"
       },
       "financial-port": {
         evidenceLevel: "待补充",
@@ -2044,7 +2047,7 @@
       "software-city": {
         evidenceLevel: "单一来源",
         sourceKeys: ["softwareCity"],
-        auditNote: "武汉市商务局确认200余家企业、2万余名从业人员，并列示IBM、飞利浦、软通动力。"
+        auditNote: "武汉市商务局确认200余家企业、2万余名从业人员，并列示IBM、飞利浦、软通动力、明源云、中软国际和佰钧成。"
       },
       greenland: {
         evidenceLevel: "单一来源",
