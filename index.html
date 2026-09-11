@@ -1000,6 +1000,321 @@
       font-size: 10px;
     }
 
+    .detail-side {
+      min-width: 0;
+    }
+
+    .enterprise-analysis {
+      padding: 18px 0 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .enterprise-coverage {
+      display: inline-flex;
+      flex: 0 0 auto;
+      min-height: 24px;
+      align-items: center;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 10px;
+      font-weight: 680;
+      white-space: nowrap;
+    }
+
+    .enterprise-coverage.high {
+      border-color: #b8dbc6;
+      color: var(--good);
+      background: var(--good-soft);
+    }
+
+    .enterprise-coverage.medium {
+      border-color: #ead79a;
+      color: var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .enterprise-coverage.low {
+      border-color: #efc5a1;
+      color: #a54c0b;
+      background: #fff3e8;
+    }
+
+    .enterprise-coverage.none {
+      border-color: #e1e5eb;
+      color: #667085;
+      background: #f2f4f7;
+    }
+
+    .enterprise-coverage-note {
+      margin: 0 0 12px;
+      padding: 8px 9px;
+      border-left: 3px solid #b9cdf0;
+      color: #526077;
+      background: #f6f9fe;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .enterprise-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+      margin-bottom: 15px;
+    }
+
+    .enterprise-stat {
+      min-width: 0;
+      padding: 9px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .enterprise-stat strong,
+    .enterprise-stat span {
+      display: block;
+    }
+
+    .enterprise-stat strong {
+      overflow: hidden;
+      color: #22324b;
+      font-size: 18px;
+      line-height: 1.15;
+      font-variant-numeric: tabular-nums;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .enterprise-stat span {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .enterprise-distributions {
+      display: grid;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .distribution-block {
+      min-width: 0;
+    }
+
+    .distribution-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .distribution-heading strong {
+      color: #344054;
+      font-size: 11px;
+    }
+
+    .distribution-heading span {
+      color: var(--faint);
+      font-size: 9px;
+    }
+
+    .distribution-list {
+      display: grid;
+      gap: 5px;
+    }
+
+    .distribution-row {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr) 30px;
+      align-items: center;
+      gap: 7px;
+      width: 100%;
+      padding: 2px 3px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      text-align: left;
+    }
+
+    button.distribution-row {
+      cursor: pointer;
+    }
+
+    .distribution-row:hover,
+    .distribution-row.is-active {
+      background: #f3f7fd;
+    }
+
+    .distribution-label {
+      overflow: hidden;
+      color: #475467;
+      font-size: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .distribution-track {
+      height: 6px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e8edf4;
+    }
+
+    .distribution-fill {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: #4a7fc5;
+    }
+
+    .distribution-value {
+      color: #344054;
+      font-size: 10px;
+      font-weight: 700;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .scale-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .scale-chip {
+      display: inline-flex;
+      min-height: 25px;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 7px;
+      border: 1px solid #dce3ec;
+      border-radius: 999px;
+      color: #526077;
+      background: #fff;
+      cursor: pointer;
+      font-size: 10px;
+    }
+
+    .scale-chip:hover,
+    .scale-chip.is-active {
+      border-color: #a9c4e9;
+      color: #1759aa;
+      background: #f2f7ff;
+    }
+
+    .scale-chip strong {
+      color: #263247;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .enterprise-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+
+    .enterprise-toolbar .enterprise-search {
+      grid-column: 1 / -1;
+    }
+
+    .enterprise-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 24px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .enterprise-table-wrap {
+      overflow: auto;
+      max-height: 460px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      scrollbar-color: #bbc7d8 transparent;
+      scrollbar-width: thin;
+    }
+
+    .enterprise-table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+    }
+
+    .enterprise-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 8px 7px;
+      border-bottom: 1px solid var(--line);
+      color: #667085;
+      background: #fbfcfe;
+      font-size: 10px;
+      font-weight: 680;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .enterprise-table td {
+      padding: 8px 7px;
+      border-bottom: 1px solid #edf0f4;
+      color: #344054;
+      font-size: 10px;
+      vertical-align: top;
+    }
+
+    .enterprise-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .enterprise-rank {
+      color: #1759aa;
+      font-weight: 760;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .enterprise-company {
+      min-width: 210px;
+    }
+
+    .enterprise-company strong,
+    .enterprise-company span {
+      display: block;
+    }
+
+    .enterprise-company strong {
+      color: #172033;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .enterprise-company span {
+      margin-top: 2px;
+      color: var(--faint);
+      font-size: 9px;
+      line-height: 1.4;
+    }
+
+    .enterprise-capital,
+    .enterprise-date {
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .enterprise-empty {
+      padding: 30px 10px !important;
+      color: var(--muted) !important;
+      text-align: center;
+    }
+
     .company-section {
       padding-top: 18px;
     }
@@ -1169,6 +1484,10 @@
         min-width: 0;
         padding-top: 0;
       }
+
+      .detail-side {
+        min-width: 0;
+      }
     }
 
     @media (max-width: 860px) {
@@ -1217,6 +1536,14 @@
 
       .company-toolbar {
         grid-template-columns: 1fr;
+      }
+
+      .enterprise-toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .enterprise-toolbar .enterprise-search {
+        grid-column: auto;
       }
 
       .page-footer {
@@ -1463,52 +1790,133 @@
           </div>
         </div>
 
-        <section class="company-section">
-          <div class="section-heading">
-            <div>
-              <h2>楼内企业查询</h2>
-              <p id="companySectionSubtitle">公开披露样本，不代表全部租户</p>
+        <div class="detail-side">
+          <section class="enterprise-analysis">
+            <div class="section-heading">
+              <div>
+                <h2>楼内企业分析</h2>
+                <p id="enterpriseSubtitle">按已采集注册地址记录分析</p>
+              </div>
+              <span class="enterprise-coverage none" id="enterpriseCoverage">待核查</span>
             </div>
-          </div>
-          <div class="company-toolbar">
-            <span class="input-shell">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.34-4.34"></path>
-              </svg>
-              <input id="companySearch" type="search" placeholder="搜索企业名称、行业或级别">
-            </span>
-            <select id="industryFilter" aria-label="行业筛选"></select>
-          </div>
-          <div class="company-meta">
-            <span id="companyResultMeta">0 条记录</span>
-            <span id="companyScope">当前楼宇</span>
-          </div>
-          <div class="company-table-wrap">
-            <table class="company-table">
-              <thead>
-                <tr>
-                  <th>企业或机构</th>
-                  <th>行业</th>
-                  <th>类型</th>
-                  <th>级别</th>
-                </tr>
-              </thead>
-              <tbody id="companyBody"></tbody>
-            </table>
-          </div>
-        </section>
+            <p class="enterprise-coverage-note" id="enterpriseCoverageNote"></p>
+
+            <div class="enterprise-stats">
+              <div class="enterprise-stat">
+                <strong id="enterpriseCount">0</strong>
+                <span>纳入分析企业</span>
+              </div>
+              <div class="enterprise-stat">
+                <strong id="enterpriseIndustryCount">0</strong>
+                <span>行业类别</span>
+              </div>
+              <div class="enterprise-stat">
+                <strong id="enterpriseLargeCount">0</strong>
+                <span>注册资本1000万以上</span>
+              </div>
+              <div class="enterprise-stat">
+                <strong id="enterpriseUndisclosedCount">0</strong>
+                <span>注册资本未披露</span>
+              </div>
+            </div>
+
+            <div class="enterprise-distributions">
+              <div class="distribution-block">
+                <div class="distribution-heading">
+                  <strong>行业分布</strong>
+                  <span>点击筛选</span>
+                </div>
+                <div class="distribution-list" id="enterpriseIndustryDistribution"></div>
+              </div>
+              <div class="distribution-block">
+                <div class="distribution-heading">
+                  <strong>注册资本规模层级</strong>
+                  <span>点击筛选</span>
+                </div>
+                <div class="scale-list" id="enterpriseScaleDistribution"></div>
+              </div>
+            </div>
+
+            <div class="enterprise-toolbar">
+              <span class="input-shell enterprise-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.34-4.34"></path>
+                </svg>
+                <input id="enterpriseSearch" type="search" placeholder="搜索企业名称或地址">
+              </span>
+              <select id="enterpriseIndustryFilter" aria-label="企业行业分类筛选"></select>
+              <select id="enterpriseScaleFilter" aria-label="注册资本规模层级筛选"></select>
+            </div>
+            <div class="enterprise-meta">
+              <span id="enterpriseResultMeta">0 条记录</span>
+              <span id="enterpriseRankMeta">排名按注册资本</span>
+            </div>
+            <div class="enterprise-table-wrap">
+              <table class="enterprise-table">
+                <thead>
+                  <tr>
+                    <th>样本内排名</th>
+                    <th>企业 / 注册地址</th>
+                    <th>行业分类</th>
+                    <th>规模层级</th>
+                    <th>注册资本</th>
+                    <th>成立日期</th>
+                  </tr>
+                </thead>
+                <tbody id="enterpriseBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="company-section">
+            <div class="section-heading">
+              <div>
+                <h2>楼内企业查询</h2>
+                <p id="companySectionSubtitle">公开披露样本，不代表全部租户</p>
+              </div>
+            </div>
+            <div class="company-toolbar">
+              <span class="input-shell">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.34-4.34"></path>
+                </svg>
+                <input id="companySearch" type="search" placeholder="搜索企业名称、行业或级别">
+              </span>
+              <select id="industryFilter" aria-label="行业筛选"></select>
+            </div>
+            <div class="company-meta">
+              <span id="companyResultMeta">0 条记录</span>
+              <span id="companyScope">当前楼宇</span>
+            </div>
+            <div class="company-table-wrap">
+              <table class="company-table">
+                <thead>
+                  <tr>
+                    <th>企业或机构</th>
+                    <th>行业</th>
+                    <th>类型</th>
+                    <th>级别</th>
+                  </tr>
+                </thead>
+                <tbody id="companyBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
       </div>
     </aside>
   </main>
 
   <footer class="page-footer">
-    <strong>口径说明：</strong>本页覆盖2025年官方认定的17栋超甲级商务楼宇，并加入14栋补充样本，共31栋；这不是武汉全部写字楼名录，企业查询也不是完整租户名册。楼宇评分由租户能级、产业集聚、租户稳定、经济贡献、运营市场五项公开信号构成，属于讨论模型，不是资产估值。企业查询只收录可回溯样本；“公开规模”也可能采用注册企业、招商签约或片区口径，详情页已逐栋标注。探迹数据仅作为第三方注册地址证据，不代表实际办公占用、经营状态或完整租户名册，也不直接改变评分。样本证据等级只表示公开信息的可追溯程度，不直接改变评分。市场背景为 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260723_2824719.shtml" target="_blank" rel="noopener noreferrer">2026 年上半年武汉五大核心区甲级写字楼存量 350.1 万㎡、年内预计新增供应 25 万㎡</a>；全市 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260702_2816002.shtml" target="_blank" rel="noopener noreferrer">亿元纳税楼宇 120 余栋</a>。
+    <strong>口径说明：</strong>本页覆盖2025年官方认定的17栋超甲级商务楼宇，并加入14栋补充样本，共31栋；这不是武汉全部写字楼名录，企业查询也不是完整租户名册。楼宇评分由租户能级、产业集聚、租户稳定、经济贡献、运营市场五项公开信号构成，属于讨论模型，不是资产估值。企业查询只收录可回溯样本；“公开规模”也可能采用注册企业、招商签约或片区口径，详情页已逐栋标注。楼内企业分析使用用户授权采集的探迹注册地址快照：共1,123条正式分析记录，A级仅代表当前查询条件完整，B级仅覆盖前50条，C级为范围或别名候选，X级当前无可确认记录；注册地址不代表实际办公占用，注册资本排名仅是当前样本内排序。行业分类为名称关键词启发式分类，规模层级按注册资本区间计算，二者都不是企业质量评级。探迹数据不直接改变楼宇评分，样本证据等级也只表示公开信息的可追溯程度，不直接改变评分。市场背景为 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260723_2824719.shtml" target="_blank" rel="noopener noreferrer">2026 年上半年武汉五大核心区甲级写字楼存量 350.1 万㎡、年内预计新增供应 25 万㎡</a>；全市 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260702_2816002.shtml" target="_blank" rel="noopener noreferrer">亿元纳税楼宇 120 余栋</a>。
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="data/tungee-audit.js"></script>
+  <script src="data/tungee-companies.js"></script>
   <script>
     const DIMENSIONS = [
       {
@@ -2222,6 +2630,21 @@
       }
     };
     const TUNGEE_AUDIT = window.TUNGEE_AUDIT || {};
+    const TUNGEE_COMPANIES_META = window.TUNGEE_COMPANIES_META || {
+      capturedAt: "2026-09-11",
+      limitation: "注册地址记录不等同于实际办公租户。",
+      scaleOrder: [
+        "1亿元以上",
+        "1000万-1亿元",
+        "500万-1000万",
+        "100万-500万",
+        "100万以下",
+        "外币未折算",
+        "未披露"
+      ],
+      scaleLegend: {}
+    };
+    const TUNGEE_COMPANIES = window.TUNGEE_COMPANIES || {};
 
     const state = {
       weights: {},
@@ -2232,6 +2655,9 @@
       evidence: "全部",
       companyQuery: "",
       industry: "全部",
+      enterpriseQuery: "",
+      enterpriseIndustry: "全部",
+      enterpriseScale: "全部",
       pageSize: 10,
       currentPage: 1
     };
@@ -2275,6 +2701,21 @@
       detailTungeeStatus: document.getElementById("detailTungeeStatus"),
       detailTungeeNote: document.getElementById("detailTungeeNote"),
       detailTungeeSamples: document.getElementById("detailTungeeSamples"),
+      enterpriseSubtitle: document.getElementById("enterpriseSubtitle"),
+      enterpriseCoverage: document.getElementById("enterpriseCoverage"),
+      enterpriseCoverageNote: document.getElementById("enterpriseCoverageNote"),
+      enterpriseCount: document.getElementById("enterpriseCount"),
+      enterpriseIndustryCount: document.getElementById("enterpriseIndustryCount"),
+      enterpriseLargeCount: document.getElementById("enterpriseLargeCount"),
+      enterpriseUndisclosedCount: document.getElementById("enterpriseUndisclosedCount"),
+      enterpriseIndustryDistribution: document.getElementById("enterpriseIndustryDistribution"),
+      enterpriseScaleDistribution: document.getElementById("enterpriseScaleDistribution"),
+      enterpriseSearch: document.getElementById("enterpriseSearch"),
+      enterpriseIndustryFilter: document.getElementById("enterpriseIndustryFilter"),
+      enterpriseScaleFilter: document.getElementById("enterpriseScaleFilter"),
+      enterpriseResultMeta: document.getElementById("enterpriseResultMeta"),
+      enterpriseRankMeta: document.getElementById("enterpriseRankMeta"),
+      enterpriseBody: document.getElementById("enterpriseBody"),
       companySectionSubtitle: document.getElementById("companySectionSubtitle"),
       companySearch: document.getElementById("companySearch"),
       industryFilter: document.getElementById("industryFilter"),
@@ -2307,6 +2748,22 @@
         status: "无可确认结果",
         note: "暂无探迹注册地址核查记录。",
         companies: []
+      };
+    }
+
+    function getTungeeCompanies(buildingId) {
+      return TUNGEE_COMPANIES[buildingId] || {
+        confidence: "X",
+        sourceQuery: "未执行",
+        matchAddress: "未确认",
+        total: null,
+        captured: 0,
+        recordCount: 0,
+        excludedCount: 0,
+        analysisEligible: false,
+        sourceMode: "未执行",
+        coverageNote: "暂无可用于分析的注册地址记录。",
+        records: []
       };
     }
 
@@ -2436,6 +2893,22 @@
         renderCompanies();
       });
 
+      ["input", "search"].forEach((eventName) => {
+        elements.enterpriseSearch.addEventListener(eventName, syncEnterpriseQueryFromInput);
+      });
+
+      elements.enterpriseIndustryFilter.addEventListener("change", () => {
+        syncEnterpriseQueryFromInput();
+        state.enterpriseIndustry = elements.enterpriseIndustryFilter.value;
+        renderTungeeCompanyRecords();
+      });
+
+      elements.enterpriseScaleFilter.addEventListener("change", () => {
+        syncEnterpriseQueryFromInput();
+        state.enterpriseScale = elements.enterpriseScaleFilter.value;
+        renderTungeeCompanyRecords();
+      });
+
       elements.pageSizeSelect.addEventListener("change", () => {
         state.pageSize = Number(elements.pageSizeSelect.value) === 5 ? 5 : 10;
         state.currentPage = 1;
@@ -2530,18 +3003,23 @@
     function renderStats() {
       const counts = { "已交叉验证": 0, "单一来源": 0, "待补充": 0 };
       let companyCount = 0;
+      let enterpriseCount = 0;
 
       BUILDINGS.forEach((building) => {
         const audit = getAudit(building.id);
         counts[audit.evidenceLevel] = (counts[audit.evidenceLevel] || 0) + 1;
         companyCount += building.companies.length;
       });
+      Object.values(TUNGEE_COMPANIES).forEach((entry) => {
+        enterpriseCount += entry.recordCount || 0;
+      });
 
       elements.statBuildingCount.textContent = String(BUILDINGS.length);
       elements.statVerifiedCount.textContent = String(counts["已交叉验证"]);
       elements.statSingleSourceCount.textContent = String(counts["单一来源"]);
       elements.statInsufficientCount.textContent = String(counts["待补充"]);
-      elements.companyRecordCount.textContent = companyCount + " 条公开记录";
+      elements.companyRecordCount.textContent =
+        companyCount + " 条公开记录 · " + enterpriseCount.toLocaleString("zh-CN") + " 条探迹分析";
     }
 
     function createDelta(rank) {
@@ -2701,6 +3179,9 @@
       state.selectedId = id;
       state.companyQuery = "";
       state.industry = "全部";
+      state.enterpriseQuery = "";
+      state.enterpriseIndustry = "全部";
+      state.enterpriseScale = "全部";
       renderRankings();
       renderDetail();
     }
@@ -2729,6 +3210,7 @@
       elements.companyScope.textContent = building.name;
       renderSources(audit.sourceKeys);
       renderTungeeAudit(building.id);
+      renderTungeeCompanyAnalysis(building.id);
 
       elements.metricList.replaceChildren();
       DIMENSIONS.forEach((dimension) => {
@@ -2844,6 +3326,290 @@
       });
     }
 
+    function formatCount(value) {
+      if (value === null || value === undefined) return "未获取";
+      return Number(value).toLocaleString("zh-CN");
+    }
+
+    function syncEnterpriseQueryFromInput() {
+      state.enterpriseQuery = elements.enterpriseSearch.value.trim().toLowerCase();
+    }
+
+    function getDistribution(records, key, order = []) {
+      const counts = new Map();
+      records.forEach((record) => {
+        const label = record[key] || "其他";
+        counts.set(label, (counts.get(label) || 0) + 1);
+      });
+
+      const orderIndex = new Map(order.map((label, index) => [label, index]));
+      return Array.from(counts, ([label, count]) => ({ label, count }))
+        .sort((left, right) => {
+          const leftOrder = orderIndex.has(left.label) ? orderIndex.get(left.label) : -1;
+          const rightOrder = orderIndex.has(right.label) ? orderIndex.get(right.label) : -1;
+          if (leftOrder !== rightOrder) return leftOrder - rightOrder;
+          if (right.count !== left.count) return right.count - left.count;
+          return left.label.localeCompare(right.label, "zh-CN");
+        });
+    }
+
+    function renderIndustryDistribution(records) {
+      const distribution = getDistribution(records, "industry");
+      const maxCount = distribution.length ? distribution[0].count : 1;
+      elements.enterpriseIndustryDistribution.replaceChildren();
+
+      if (distribution.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "tungee-empty";
+        empty.textContent = "暂无行业分布数据。";
+        elements.enterpriseIndustryDistribution.appendChild(empty);
+        return;
+      }
+
+      distribution.forEach((item) => {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "distribution-row";
+        row.classList.toggle("is-active", state.enterpriseIndustry === item.label);
+        row.setAttribute("aria-pressed", state.enterpriseIndustry === item.label ? "true" : "false");
+        row.title = "筛选：" + item.label;
+
+        const label = document.createElement("span");
+        label.className = "distribution-label";
+        label.textContent = item.label;
+
+        const track = document.createElement("span");
+        track.className = "distribution-track";
+        const fill = document.createElement("span");
+        fill.className = "distribution-fill";
+        fill.style.width = (item.count / maxCount) * 100 + "%";
+        track.appendChild(fill);
+
+        const value = document.createElement("span");
+        value.className = "distribution-value";
+        value.textContent = String(item.count);
+
+        row.appendChild(label);
+        row.appendChild(track);
+        row.appendChild(value);
+        row.addEventListener("click", () => {
+          syncEnterpriseQueryFromInput();
+          state.enterpriseIndustry =
+            state.enterpriseIndustry === item.label ? "全部" : item.label;
+          renderTungeeCompanyAnalysis(state.selectedId);
+        });
+        elements.enterpriseIndustryDistribution.appendChild(row);
+      });
+    }
+
+    function renderScaleDistribution(records) {
+      const distribution = getDistribution(
+        records,
+        "scale",
+        TUNGEE_COMPANIES_META.scaleOrder || []
+      );
+      elements.enterpriseScaleDistribution.replaceChildren();
+
+      if (distribution.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "tungee-empty";
+        empty.textContent = "暂无规模层级数据。";
+        elements.enterpriseScaleDistribution.appendChild(empty);
+        return;
+      }
+
+      distribution.forEach((item) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "scale-chip";
+        button.classList.toggle("is-active", state.enterpriseScale === item.label);
+        button.setAttribute("aria-pressed", state.enterpriseScale === item.label ? "true" : "false");
+        button.title = TUNGEE_COMPANIES_META.scaleLegend[item.label] || item.label;
+
+        const label = document.createElement("span");
+        label.textContent = item.label;
+        const count = document.createElement("strong");
+        count.textContent = String(item.count);
+        button.appendChild(label);
+        button.appendChild(count);
+        button.addEventListener("click", () => {
+          syncEnterpriseQueryFromInput();
+          state.enterpriseScale = state.enterpriseScale === item.label ? "全部" : item.label;
+          renderTungeeCompanyAnalysis(state.selectedId);
+        });
+        elements.enterpriseScaleDistribution.appendChild(button);
+      });
+    }
+
+    function populateEnterpriseFilters(records) {
+      const industries = [
+        "全部",
+        ...Array.from(new Set(records.map((record) => record.industry)))
+          .sort((left, right) => left.localeCompare(right, "zh-CN"))
+      ];
+      const scales = [
+        "全部",
+        ...(TUNGEE_COMPANIES_META.scaleOrder || []).filter((scale) => {
+          return records.some((record) => record.scale === scale);
+        })
+      ];
+
+      if (!industries.includes(state.enterpriseIndustry)) state.enterpriseIndustry = "全部";
+      if (!scales.includes(state.enterpriseScale)) state.enterpriseScale = "全部";
+
+      elements.enterpriseIndustryFilter.replaceChildren();
+      industries.forEach((industry) => {
+        const option = document.createElement("option");
+        option.value = industry;
+        option.textContent = industry;
+        elements.enterpriseIndustryFilter.appendChild(option);
+      });
+      elements.enterpriseIndustryFilter.value = state.enterpriseIndustry;
+
+      elements.enterpriseScaleFilter.replaceChildren();
+      scales.forEach((scale) => {
+        const option = document.createElement("option");
+        option.value = scale;
+        option.textContent = scale;
+        elements.enterpriseScaleFilter.appendChild(option);
+      });
+      elements.enterpriseScaleFilter.value = state.enterpriseScale;
+    }
+
+    function getVisibleTungeeCompanyRecords(data) {
+      const query = state.enterpriseQuery;
+      return data.records.filter((record) => {
+        const haystack = [
+          record.name,
+          record.address,
+          record.industry,
+          record.scale,
+          record.capitalLabel,
+          record.established
+        ].join(" ").toLowerCase();
+        const matchesQuery = !query || haystack.includes(query);
+        const matchesIndustry =
+          state.enterpriseIndustry === "全部" || record.industry === state.enterpriseIndustry;
+        const matchesScale =
+          state.enterpriseScale === "全部" || record.scale === state.enterpriseScale;
+        return matchesQuery && matchesIndustry && matchesScale;
+      });
+    }
+
+    function renderTungeeCompanyRecords() {
+      const data = getTungeeCompanies(state.selectedId);
+      const records = getVisibleTungeeCompanyRecords(data);
+      const rankedCount = data.records.filter((record) => record.rank !== null).length;
+      elements.enterpriseBody.replaceChildren();
+
+      if (records.length === 0) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 6;
+        cell.className = "enterprise-empty";
+        if (data.records.length === 0) {
+          if (data.confidence === "X") {
+            cell.textContent = "当前查询无可确认记录";
+          } else if (data.confidence === "C") {
+            cell.textContent = "当前结果属于范围或别名候选，未纳入主楼正式分析";
+          } else {
+            cell.textContent = "当前查询没有可用的注册地址企业记录";
+          }
+        } else {
+          cell.textContent = "没有符合当前筛选条件的企业记录";
+        }
+        row.appendChild(cell);
+        elements.enterpriseBody.appendChild(row);
+      } else {
+        records.forEach((record) => {
+          const row = document.createElement("tr");
+
+          const rank = document.createElement("td");
+          rank.className = "enterprise-rank";
+          rank.textContent = record.rank === null ? "未排名" : String(record.rank);
+
+          const company = document.createElement("td");
+          company.className = "enterprise-company";
+          const name = document.createElement("strong");
+          name.textContent = record.name;
+          const address = document.createElement("span");
+          address.textContent = record.address;
+          company.appendChild(name);
+          company.appendChild(address);
+
+          const industry = document.createElement("td");
+          industry.textContent = record.industry;
+
+          const scale = document.createElement("td");
+          scale.textContent = record.scale;
+          scale.title = TUNGEE_COMPANIES_META.scaleLegend[record.scale] || record.scale;
+
+          const capital = document.createElement("td");
+          capital.className = "enterprise-capital";
+          capital.textContent = record.capitalLabel || "未披露";
+
+          const established = document.createElement("td");
+          established.className = "enterprise-date";
+          established.textContent = record.established || "未披露";
+
+          row.appendChild(rank);
+          row.appendChild(company);
+          row.appendChild(industry);
+          row.appendChild(scale);
+          row.appendChild(capital);
+          row.appendChild(established);
+          elements.enterpriseBody.appendChild(row);
+        });
+      }
+
+      elements.enterpriseResultMeta.textContent =
+        "显示 " + records.length + " / " + data.recordCount + " 条分析记录";
+      elements.enterpriseRankMeta.textContent =
+        data.recordCount > 0
+          ? rankedCount + " 家有注册资本，可参与样本内排名"
+          : "当前无可排名记录";
+    }
+
+    function renderTungeeCompanyAnalysis(buildingId) {
+      const data = getTungeeCompanies(buildingId);
+      const records = data.records;
+      const industryCount = new Set(records.map((record) => record.industry)).size;
+      const largeCount = records.filter((record) => {
+        return record.scale === "1亿元以上" || record.scale === "1000万-1亿元";
+      }).length;
+      const undisclosedCount = records.filter((record) => record.scale === "未披露").length;
+      const confidenceLabel = TUNGEE_META.confidenceLegend[data.confidence] || "待核查";
+
+      elements.enterpriseSubtitle.textContent =
+        data.recordCount > 0
+          ? "已采集注册地址样本 · " + data.sourceMode
+          : data.confidence === "X"
+            ? "当前查询无可确认的注册地址记录"
+            : "未纳入主楼正式分析的注册地址候选";
+      elements.enterpriseCoverage.textContent =
+        data.confidence + " · " + (data.recordCount > 0 ? data.recordCount + " 条" : "无正式记录");
+      elements.enterpriseCoverage.className =
+        "enterprise-coverage " + getTungeeConfidenceClass(data.confidence);
+      elements.enterpriseCoverage.title = confidenceLabel;
+      elements.enterpriseCoverageNote.textContent = [
+        data.coverageNote,
+        "总命中 " + formatCount(data.total) + "，已采集 " + formatCount(data.captured) + "。",
+        "查询：" + data.sourceQuery + "。",
+        "行业与规模层级为分析分类，不是官方标签或企业质量评级。"
+      ].join(" ");
+
+      elements.enterpriseCount.textContent = formatCount(data.recordCount);
+      elements.enterpriseIndustryCount.textContent = formatCount(industryCount);
+      elements.enterpriseLargeCount.textContent = formatCount(largeCount);
+      elements.enterpriseUndisclosedCount.textContent = formatCount(undisclosedCount);
+      elements.enterpriseSearch.value = state.enterpriseQuery;
+
+      populateEnterpriseFilters(records);
+      renderIndustryDistribution(records);
+      renderScaleDistribution(records);
+      renderTungeeCompanyRecords();
+    }
+
     function getVisibleCompanies() {
       const building = BUILDINGS.find((item) => item.id === state.selectedId);
       if (!building) return [];
@@ -2955,6 +3721,10 @@
         "探迹核查状态",
         "探迹审计说明",
         "探迹样本",
+        "楼内分析记录数",
+        "楼内行业数",
+        "楼内1000万以上记录数",
+        "楼内企业分析样本",
         "较基准"
       ];
 
@@ -2962,8 +3732,27 @@
         const movement = originalRank[rank.building.id] - rank.rank;
         const audit = getAudit(rank.building.id);
         const tungee = getTungeeAudit(rank.building.id);
+        const enterprise = getTungeeCompanies(rank.building.id);
         const tungeeSamples = tungee.companies
           .map((company) => company.name + "：" + company.address)
+          .join("；");
+        const enterpriseIndustries = new Set(
+          enterprise.records.map((record) => record.industry)
+        ).size;
+        const enterpriseLargeCount = enterprise.records.filter((record) => {
+          return record.scale === "1亿元以上" || record.scale === "1000万-1亿元";
+        }).length;
+        const enterpriseSamples = enterprise.records
+          .map((record) => {
+            const rankLabel = record.rank === null ? "未排名" : "第" + record.rank + "名";
+            return [
+              rankLabel,
+              record.name,
+              record.capitalLabel,
+              record.industry,
+              record.scale
+            ].join("：");
+          })
           .join("；");
         const sourceLabels = audit.sourceKeys
           .map((key) => SOURCES[key] && SOURCES[key].label)
@@ -2995,6 +3784,10 @@
           tungee.status,
           tungee.note,
           tungeeSamples,
+          enterprise.recordCount,
+          enterpriseIndustries,
+          enterpriseLargeCount,
+          enterpriseSamples,
           movement === 0 ? "0" : movement > 0 ? "+" + movement : String(movement)
         ];
       });
