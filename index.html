@@ -419,9 +419,32 @@
       margin-bottom: 10px;
     }
 
+    .ranking-toolbar-copy {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
     .ranking-toolbar p {
       margin: 0;
       color: var(--muted);
+      font-size: 12px;
+    }
+
+    .page-size-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .page-size-control select {
+      width: auto;
+      min-height: 30px;
+      padding: 3px 24px 3px 8px;
       font-size: 12px;
     }
 
@@ -436,6 +459,50 @@
 
     .link-button[hidden] {
       display: none;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding-top: 12px;
+    }
+
+    .pagination[hidden] {
+      display: none;
+    }
+
+    .page-button {
+      min-width: 30px;
+      min-height: 30px;
+      padding: 4px 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: 5px;
+      color: #344054;
+      background: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .page-button:hover:not(:disabled):not(.active) {
+      border-color: #9fb3cf;
+      color: var(--accent);
+      background: #f7faff;
+    }
+
+    .page-button.active {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--accent);
+      font-weight: 700;
+    }
+
+    .page-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.42;
     }
 
     .table-wrap {
@@ -1179,8 +1246,17 @@
         <span class="section-chip" id="visibleCount">31 栋</span>
       </div>
       <div class="ranking-toolbar">
-        <p>相对基准排名变化</p>
-        <button class="link-button" id="clearFiltersButton" type="button" hidden>清除筛选</button>
+        <div class="ranking-toolbar-copy">
+          <p>相对基准排名变化</p>
+          <button class="link-button" id="clearFiltersButton" type="button" hidden>清除筛选</button>
+        </div>
+        <label class="page-size-control">
+          每页
+          <select id="pageSizeSelect" aria-label="每页楼宇数量">
+            <option value="10" selected>10 栋</option>
+            <option value="5">5 栋</option>
+          </select>
+        </label>
       </div>
       <div class="table-wrap">
         <table class="ranking-table">
@@ -1201,6 +1277,7 @@
           <tbody id="rankingBody"></tbody>
         </table>
       </div>
+      <nav class="pagination" id="pagination" aria-label="排名分页" hidden></nav>
     </section>
 
     <aside class="detail-panel">
@@ -1994,7 +2071,9 @@
       status: "全部",
       evidence: "全部",
       companyQuery: "",
-      industry: "全部"
+      industry: "全部",
+      pageSize: 10,
+      currentPage: 1
     };
 
     const elements = {
@@ -2014,6 +2093,8 @@
       rankingSummary: document.getElementById("rankingSummary"),
       visibleCount: document.getElementById("visibleCount"),
       rankingBody: document.getElementById("rankingBody"),
+      pageSizeSelect: document.getElementById("pageSizeSelect"),
+      pagination: document.getElementById("pagination"),
       detailName: document.getElementById("detailName"),
       detailArea: document.getElementById("detailArea"),
       detailStatus: document.getElementById("detailStatus"),
@@ -2122,21 +2203,25 @@
 
       elements.buildingSearch.addEventListener("input", () => {
         state.buildingQuery = elements.buildingSearch.value.trim().toLowerCase();
+        state.currentPage = 1;
         renderRankings();
       });
 
       elements.districtFilter.addEventListener("change", () => {
         state.district = elements.districtFilter.value;
+        state.currentPage = 1;
         renderRankings();
       });
 
       elements.statusFilter.addEventListener("change", () => {
         state.status = elements.statusFilter.value;
+        state.currentPage = 1;
         renderRankings();
       });
 
       elements.evidenceFilter.addEventListener("change", () => {
         state.evidence = elements.evidenceFilter.value;
+        state.currentPage = 1;
         renderRankings();
       });
 
@@ -2149,6 +2234,7 @@
         elements.districtFilter.value = "全部";
         elements.statusFilter.value = "全部";
         elements.evidenceFilter.value = "全部";
+        state.currentPage = 1;
         renderRankings();
       });
 
@@ -2160,6 +2246,12 @@
       elements.industryFilter.addEventListener("change", () => {
         state.industry = elements.industryFilter.value;
         renderCompanies();
+      });
+
+      elements.pageSizeSelect.addEventListener("change", () => {
+        state.pageSize = Number(elements.pageSizeSelect.value) === 5 ? 5 : 10;
+        state.currentPage = 1;
+        renderRankings();
       });
     }
 
@@ -2274,9 +2366,54 @@
       return span;
     }
 
+    function renderPagination(totalPages) {
+      elements.pagination.replaceChildren();
+
+      if (totalPages <= 1) {
+        elements.pagination.hidden = true;
+        return;
+      }
+
+      elements.pagination.hidden = false;
+
+      const addButton = (label, page, options = {}) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "page-button" + (options.active ? " active" : "");
+        button.textContent = String(label);
+        button.disabled = Boolean(options.disabled);
+        if (options.ariaLabel) button.setAttribute("aria-label", options.ariaLabel);
+        if (options.active) button.setAttribute("aria-current", "page");
+        button.addEventListener("click", () => {
+          state.currentPage = page;
+          renderRankings();
+        });
+        elements.pagination.appendChild(button);
+      };
+
+      addButton("上一页", state.currentPage - 1, {
+        disabled: state.currentPage === 1,
+        ariaLabel: "上一页"
+      });
+
+      for (let page = 1; page <= totalPages; page += 1) {
+        addButton(page, page, {
+          active: page === state.currentPage,
+          ariaLabel: "第 " + page + " 页"
+        });
+      }
+
+      addButton("下一页", state.currentPage + 1, {
+        disabled: state.currentPage === totalPages,
+        ariaLabel: "下一页"
+      });
+    }
+
     function renderRankings() {
       const rankings = getRankedBuildings();
       const filtered = getFilteredRankings(rankings);
+      const totalPages = Math.max(1, Math.ceil(filtered.length / state.pageSize));
+      state.currentPage = Math.min(Math.max(1, state.currentPage), totalPages);
       const hasFilters = Boolean(state.buildingQuery)
         || state.district !== "全部"
         || state.status !== "全部"
@@ -2292,6 +2429,7 @@
       elements.rankingSummary.textContent = selectedWeightParts.join(" · ");
 
       elements.rankingBody.replaceChildren();
+      renderPagination(totalPages);
 
       if (filtered.length === 0) {
         const row = document.createElement("tr");
@@ -2304,7 +2442,10 @@
         return;
       }
 
-      filtered.forEach((rank) => {
+      const pageStart = (state.currentPage - 1) * state.pageSize;
+      const pageRows = filtered.slice(pageStart, pageStart + state.pageSize);
+
+      pageRows.forEach((rank) => {
         const building = rank.building;
         const audit = getAudit(building.id);
         const row = document.createElement("tr");
@@ -2536,6 +2677,7 @@
 
     function renderAll() {
       renderWeights();
+      state.currentPage = 1;
       renderRankings();
       renderDetail();
     }
