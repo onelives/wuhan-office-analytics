@@ -1213,7 +1213,7 @@
 
     .enterprise-toolbar {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 7px;
       margin-bottom: 8px;
     }
@@ -1243,7 +1243,7 @@
 
     .enterprise-table {
       width: 100%;
-      min-width: 720px;
+      min-width: 980px;
       border-collapse: collapse;
     }
 
@@ -1304,9 +1304,56 @@
     }
 
     .enterprise-capital,
-    .enterprise-date {
+    .enterprise-date,
+    .enterprise-status {
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
+    }
+
+    .enterprise-link {
+      display: inline-block;
+      margin-top: 3px;
+      color: #245da8;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .enterprise-link:hover {
+      text-decoration: underline;
+    }
+
+    .enterprise-match {
+      display: inline-block;
+      padding: 2px 5px;
+      border: 1px solid #d8e1ec;
+      border-radius: 4px;
+      color: #4a586d;
+      background: #f8fafc;
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .enterprise-match.primary {
+      border-color: #b8d3f2;
+      color: #1759aa;
+      background: #f2f7ff;
+    }
+
+    .enterprise-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-top: 10px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .enterprise-pagination-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .enterprise-empty {
@@ -1735,7 +1782,7 @@
       <nav class="pagination" id="pagination" aria-label="排名分页" hidden></nav>
     </section>
 
-    <aside class="detail-panel">
+    <aside class="detail-panel" id="detailPanel">
       <div class="detail-content">
         <div class="detail-main" id="detailMain">
           <div class="detail-title-row">
@@ -1781,7 +1828,7 @@
             <div class="tungee-stats">
               <span>命中 <strong id="detailTungeeTotal">0</strong></span>
               <span>已采集 <strong id="detailTungeeCaptured">0</strong></span>
-              <span id="detailTungeeDate">2026-09-11</span>
+              <span id="detailTungeeDate">2026-09-12</span>
             </div>
             <p class="tungee-query" id="detailTungeeQuery"></p>
             <p class="tungee-status" id="detailTungeeStatus"></p>
@@ -1804,7 +1851,7 @@
             <div class="enterprise-stats">
               <div class="enterprise-stat">
                 <strong id="enterpriseCount">0</strong>
-                <span>纳入分析企业</span>
+                <span id="enterpriseCountLabel">名址双匹配企业</span>
               </div>
               <div class="enterprise-stat">
                 <strong id="enterpriseIndustryCount">0</strong>
@@ -1845,6 +1892,11 @@
                 </svg>
                 <input id="enterpriseSearch" type="search" placeholder="搜索企业名称或地址">
               </span>
+              <select id="enterpriseMatchFilter" aria-label="企业地址匹配范围">
+                <option value="primary">名址双匹配主名单</option>
+                <option value="address">仅地址候选</option>
+                <option value="all">全部地址记录</option>
+              </select>
               <select id="enterpriseIndustryFilter" aria-label="企业行业分类筛选"></select>
               <select id="enterpriseScaleFilter" aria-label="注册资本规模层级筛选"></select>
             </div>
@@ -1852,7 +1904,7 @@
               <span id="enterpriseResultMeta">0 条记录</span>
               <span id="enterpriseRankMeta">排名按注册资本</span>
             </div>
-            <div class="enterprise-table-wrap">
+            <div class="enterprise-table-wrap" id="enterpriseTableWrap">
               <table class="enterprise-table">
                 <thead>
                   <tr>
@@ -1860,12 +1912,28 @@
                     <th>企业 / 注册地址</th>
                     <th>行业分类</th>
                     <th>规模层级</th>
+                    <th>登记状态</th>
                     <th>注册资本</th>
                     <th>成立日期</th>
+                    <th>匹配依据</th>
                   </tr>
                 </thead>
                 <tbody id="enterpriseBody"></tbody>
               </table>
+            </div>
+            <div class="enterprise-pagination" id="enterprisePagination" aria-label="企业名单分页">
+              <div class="enterprise-pagination-main">
+                <button class="page-button" id="enterprisePrevPage" type="button">上一页</button>
+                <span id="enterprisePageMeta">第 1 / 1 页</span>
+                <button class="page-button" id="enterpriseNextPage" type="button">下一页</button>
+              </div>
+              <label class="page-size-control">每页
+                <select id="enterprisePageSize" aria-label="每页企业数">
+                  <option value="20">20 条</option>
+                  <option value="50" selected>50 条</option>
+                  <option value="100">100 条</option>
+                </select>
+              </label>
             </div>
           </section>
 
@@ -1910,7 +1978,7 @@
   </main>
 
   <footer class="page-footer">
-    <strong>口径说明：</strong>本页覆盖2025年官方认定的17栋超甲级商务楼宇，并加入14栋补充样本，共31栋；这不是武汉全部写字楼名录，企业查询也不是完整租户名册。楼宇评分由租户能级、产业集聚、租户稳定、经济贡献、运营市场五项公开信号构成，属于讨论模型，不是资产估值。企业查询只收录可回溯样本；“公开规模”也可能采用注册企业、招商签约或片区口径，详情页已逐栋标注。楼内企业分析使用用户授权采集的探迹注册地址快照：共1,123条正式分析记录，A级仅代表当前查询条件完整，B级仅覆盖前50条，C级为范围或别名候选，X级当前无可确认记录；注册地址不代表实际办公占用，注册资本排名仅是当前样本内排序。行业分类为名称关键词启发式分类，规模层级按注册资本区间计算，二者都不是企业质量评级。探迹数据不直接改变楼宇评分，样本证据等级也只表示公开信息的可追溯程度，不直接改变评分。市场背景为 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260723_2824719.shtml" target="_blank" rel="noopener noreferrer">2026 年上半年武汉五大核心区甲级写字楼存量 350.1 万㎡、年内预计新增供应 25 万㎡</a>；全市 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260702_2816002.shtml" target="_blank" rel="noopener noreferrer">亿元纳税楼宇 120 余栋</a>。
+    <strong>口径说明：</strong>本页覆盖2025年官方认定的17栋超甲级商务楼宇，并加入14栋补充样本，共31栋；这不是武汉全部写字楼名录，公开企业样本也不是完整租户名册。楼宇评分由租户能级、产业集聚、租户稳定、经济贡献、运营市场五项公开信号构成，属于讨论模型，不是资产估值。楼内企业分析使用用户授权采集的探迹注册详细地址快照：共20,294条地址记录，其中名址双匹配13,221条、地址候选7,073条；默认排名仅使用名址双匹配主名单，地址候选单独展示且不进入主名单统计。A级表示当前地址条件完整采集，C级表示项目范围或楼宇归属待复核，X级表示当前无可确认记录。注册地址不代表实际办公占用，注册资本排名仅是当前匹配范围内的排序。行业分类为名称关键词启发式分类，规模层级按注册资本区间计算，二者都不是企业质量评级。探迹数据不直接改变楼宇评分，样本证据等级也只表示公开信息的可追溯程度，不直接改变评分。市场背景为 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260723_2824719.shtml" target="_blank" rel="noopener noreferrer">2026 年上半年武汉五大核心区甲级写字楼存量 350.1 万㎡、年内预计新增供应 25 万㎡</a>；全市 <a href="https://www.wuhan.gov.cn/sy/whyw/202607/t20260702_2816002.shtml" target="_blank" rel="noopener noreferrer">亿元纳税楼宇 120 余栋</a>。
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -2327,7 +2395,7 @@
         status: "已投运",
         sample: "租户名单待补充",
         profile: "2025年超甲级商务楼宇，位于关山大道商务片区；公开结果暂未提供可回溯的企业名单。",
-        coverage: "探迹名称检索前50条均指向关山大道332号保利国际中心；原“武昌·中南路”对应中南路99号保利文化广场/保利广场，属于同名项目混淆，已纠偏。三星电子武汉分公司记录缺少可回溯原始来源，仍不进入企业查询。",
+        coverage: "探迹注册地址证据指向关山大道332号保利国际中心；原“武昌·中南路”对应中南路99号保利文化广场/保利广场，属于同名项目混淆，已纠偏。三星电子武汉分公司记录缺少可回溯原始来源，仍不进入企业查询。",
         scores: { level: 7.0, cluster: 6.5, stable: 7.5, contrib: 6.5, ops: 7.0 },
         companies: []
       },
@@ -2619,20 +2687,24 @@
     };
 
     const TUNGEE_META = window.TUNGEE_META || {
-      capturedAt: "2026-09-11",
+      capturedAt: "2026-09-12",
       source: "探迹企业库注册地址检索",
-      limitation: "注册地址证据不等同于实际办公占用或完整租户名册，A级也只表示当前查询条件已完整采集。",
+      limitation: "注册地址证据不等同于实际办公占用或完整租户名册，名址双匹配与地址候选分开展示。",
       confidenceLegend: {
-        A: "A · 当前查询完整",
-        B: "B · 仅前50条",
-        C: "C · 范围或归属待复核",
+        A: "A · 地址条件完整，名址匹配主名单已全量采集",
+        B: "B · 部分采集",
+        C: "C · 项目范围或楼宇归属待复核",
         X: "X · 无有效结果"
       }
     };
     const TUNGEE_AUDIT = window.TUNGEE_AUDIT || {};
     const TUNGEE_COMPANIES_META = window.TUNGEE_COMPANIES_META || {
-      capturedAt: "2026-09-11",
+      capturedAt: "2026-09-12",
       limitation: "注册地址记录不等同于实际办公租户。",
+      matchLegend: {
+        primary: "名址双匹配：注册详细地址同时命中楼宇名称与地址条件",
+        address: "地址候选：仅命中注册门牌或项目范围，未出现楼宇名称"
+      },
       scaleOrder: [
         "1亿元以上",
         "1000万-1亿元",
@@ -2658,6 +2730,9 @@
       enterpriseQuery: "",
       enterpriseIndustry: "全部",
       enterpriseScale: "全部",
+      enterpriseMatch: "primary",
+      enterprisePage: 1,
+      enterprisePageSize: 50,
       pageSize: 10,
       currentPage: 1
     };
@@ -2682,6 +2757,7 @@
       pageSizeSelect: document.getElementById("pageSizeSelect"),
       pagination: document.getElementById("pagination"),
       detailName: document.getElementById("detailName"),
+      detailPanel: document.getElementById("detailPanel"),
       detailArea: document.getElementById("detailArea"),
       detailStatus: document.getElementById("detailStatus"),
       detailScore: document.getElementById("detailScore"),
@@ -2705,17 +2781,25 @@
       enterpriseCoverage: document.getElementById("enterpriseCoverage"),
       enterpriseCoverageNote: document.getElementById("enterpriseCoverageNote"),
       enterpriseCount: document.getElementById("enterpriseCount"),
+      enterpriseCountLabel: document.getElementById("enterpriseCountLabel"),
       enterpriseIndustryCount: document.getElementById("enterpriseIndustryCount"),
       enterpriseLargeCount: document.getElementById("enterpriseLargeCount"),
       enterpriseUndisclosedCount: document.getElementById("enterpriseUndisclosedCount"),
       enterpriseIndustryDistribution: document.getElementById("enterpriseIndustryDistribution"),
       enterpriseScaleDistribution: document.getElementById("enterpriseScaleDistribution"),
       enterpriseSearch: document.getElementById("enterpriseSearch"),
+      enterpriseMatchFilter: document.getElementById("enterpriseMatchFilter"),
       enterpriseIndustryFilter: document.getElementById("enterpriseIndustryFilter"),
       enterpriseScaleFilter: document.getElementById("enterpriseScaleFilter"),
       enterpriseResultMeta: document.getElementById("enterpriseResultMeta"),
       enterpriseRankMeta: document.getElementById("enterpriseRankMeta"),
+      enterpriseTableWrap: document.getElementById("enterpriseTableWrap"),
       enterpriseBody: document.getElementById("enterpriseBody"),
+      enterprisePagination: document.getElementById("enterprisePagination"),
+      enterprisePrevPage: document.getElementById("enterprisePrevPage"),
+      enterpriseNextPage: document.getElementById("enterpriseNextPage"),
+      enterprisePageMeta: document.getElementById("enterprisePageMeta"),
+      enterprisePageSize: document.getElementById("enterprisePageSize"),
       companySectionSubtitle: document.getElementById("companySectionSubtitle"),
       companySearch: document.getElementById("companySearch"),
       industryFilter: document.getElementById("industryFilter"),
@@ -2759,6 +2843,8 @@
         total: null,
         captured: 0,
         recordCount: 0,
+        verifiedCount: 0,
+        candidateCount: 0,
         excludedCount: 0,
         analysisEligible: false,
         sourceMode: "未执行",
@@ -2894,18 +2980,47 @@
       });
 
       ["input", "search"].forEach((eventName) => {
-        elements.enterpriseSearch.addEventListener(eventName, syncEnterpriseQueryFromInput);
+        elements.enterpriseSearch.addEventListener(eventName, () => {
+          syncEnterpriseQueryFromInput();
+          state.enterprisePage = 1;
+          renderTungeeCompanyRecords();
+        });
+      });
+
+      elements.enterpriseMatchFilter.addEventListener("change", () => {
+        syncEnterpriseQueryFromInput();
+        state.enterpriseMatch = elements.enterpriseMatchFilter.value;
+        state.enterprisePage = 1;
+        renderTungeeCompanyAnalysis(state.selectedId);
       });
 
       elements.enterpriseIndustryFilter.addEventListener("change", () => {
         syncEnterpriseQueryFromInput();
         state.enterpriseIndustry = elements.enterpriseIndustryFilter.value;
+        state.enterprisePage = 1;
         renderTungeeCompanyRecords();
       });
 
       elements.enterpriseScaleFilter.addEventListener("change", () => {
         syncEnterpriseQueryFromInput();
         state.enterpriseScale = elements.enterpriseScaleFilter.value;
+        state.enterprisePage = 1;
+        renderTungeeCompanyRecords();
+      });
+
+      elements.enterprisePageSize.addEventListener("change", () => {
+        state.enterprisePageSize = Number(elements.enterprisePageSize.value) || 50;
+        state.enterprisePage = 1;
+        renderTungeeCompanyRecords();
+      });
+
+      elements.enterprisePrevPage.addEventListener("click", () => {
+        state.enterprisePage = Math.max(1, state.enterprisePage - 1);
+        renderTungeeCompanyRecords();
+      });
+
+      elements.enterpriseNextPage.addEventListener("click", () => {
+        state.enterprisePage += 1;
         renderTungeeCompanyRecords();
       });
 
@@ -3182,8 +3297,15 @@
       state.enterpriseQuery = "";
       state.enterpriseIndustry = "全部";
       state.enterpriseScale = "全部";
+      state.enterpriseMatch = "primary";
+      state.enterprisePage = 1;
       renderRankings();
       renderDetail();
+      if (window.matchMedia("(max-width: 860px)").matches) {
+        window.requestAnimationFrame(() => {
+          elements.detailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
     }
 
     function renderDetail() {
@@ -3396,6 +3518,7 @@
           syncEnterpriseQueryFromInput();
           state.enterpriseIndustry =
             state.enterpriseIndustry === item.label ? "全部" : item.label;
+          state.enterprisePage = 1;
           renderTungeeCompanyAnalysis(state.selectedId);
         });
         elements.enterpriseIndustryDistribution.appendChild(row);
@@ -3435,6 +3558,7 @@
         button.addEventListener("click", () => {
           syncEnterpriseQueryFromInput();
           state.enterpriseScale = state.enterpriseScale === item.label ? "全部" : item.label;
+          state.enterprisePage = 1;
           renderTungeeCompanyAnalysis(state.selectedId);
         });
         elements.enterpriseScaleDistribution.appendChild(button);
@@ -3476,36 +3600,82 @@
       elements.enterpriseScaleFilter.value = state.enterpriseScale;
     }
 
+    function getScopedTungeeCompanyRecords(data) {
+      const records = data.records || [];
+      if (state.enterpriseMatch === "all") return records;
+      return records.filter((record) => record.matchLevel === state.enterpriseMatch);
+    }
+
+    function getEnterpriseRank(record) {
+      if (state.enterpriseMatch === "address") return record.rankCandidate;
+      if (state.enterpriseMatch === "all") return record.rankAll;
+      return record.rankPrimary;
+    }
+
+    function getEnterpriseMatchLabel(matchLevel) {
+      const legend = TUNGEE_COMPANIES_META.matchLegend || {};
+      return matchLevel === "primary"
+        ? (legend.primary || "名址双匹配").split("：")[0]
+        : (legend.address || "地址候选").split("：")[0];
+    }
+
+    function getEnterpriseMatchTitle(matchLevel) {
+      const legend = TUNGEE_COMPANIES_META.matchLegend || {};
+      return matchLevel === "primary"
+        ? legend.primary || "注册详细地址同时命中楼宇名称与地址条件"
+        : legend.address || "仅命中注册门牌或项目范围，未出现楼宇名称";
+    }
+
     function getVisibleTungeeCompanyRecords(data) {
       const query = state.enterpriseQuery;
-      return data.records.filter((record) => {
-        const haystack = [
-          record.name,
-          record.address,
-          record.industry,
-          record.scale,
-          record.capitalLabel,
-          record.established
-        ].join(" ").toLowerCase();
-        const matchesQuery = !query || haystack.includes(query);
-        const matchesIndustry =
-          state.enterpriseIndustry === "全部" || record.industry === state.enterpriseIndustry;
-        const matchesScale =
-          state.enterpriseScale === "全部" || record.scale === state.enterpriseScale;
-        return matchesQuery && matchesIndustry && matchesScale;
-      });
+      return getScopedTungeeCompanyRecords(data)
+        .filter((record) => {
+          const haystack = [
+            record.name,
+            record.address,
+            record.industry,
+            record.scale,
+            record.capitalLabel,
+            record.established,
+            record.status
+          ].join(" ").toLowerCase();
+          const matchesQuery = !query || haystack.includes(query);
+          const matchesIndustry =
+            state.enterpriseIndustry === "全部" || record.industry === state.enterpriseIndustry;
+          const matchesScale =
+            state.enterpriseScale === "全部" || record.scale === state.enterpriseScale;
+          return matchesQuery && matchesIndustry && matchesScale;
+        })
+        .map((record) => ({ record, rank: getEnterpriseRank(record) }))
+        .sort((left, right) => {
+          if (left.rank !== null && right.rank !== null && left.rank !== right.rank) {
+            return left.rank - right.rank;
+          }
+          if (left.rank !== null && right.rank === null) return -1;
+          if (left.rank === null && right.rank !== null) return 1;
+          return left.record.name.localeCompare(right.record.name, "zh-CN");
+        });
     }
 
     function renderTungeeCompanyRecords() {
       const data = getTungeeCompanies(state.selectedId);
+      const scopedRecords = getScopedTungeeCompanyRecords(data);
       const records = getVisibleTungeeCompanyRecords(data);
-      const rankedCount = data.records.filter((record) => record.rank !== null).length;
+      const rankedCount = scopedRecords.filter((record) => getEnterpriseRank(record) !== null).length;
+      const pageSize = state.enterprisePageSize;
+      const totalPages = Math.max(1, Math.ceil(records.length / pageSize));
+      const hasRecords = records.length > 0;
+      state.enterprisePage = hasRecords
+        ? Math.min(Math.max(1, state.enterprisePage), totalPages)
+        : 1;
+      const start = (state.enterprisePage - 1) * pageSize;
+      const visiblePageRecords = records.slice(start, start + pageSize);
       elements.enterpriseBody.replaceChildren();
 
-      if (records.length === 0) {
+      if (!hasRecords) {
         const row = document.createElement("tr");
         const cell = document.createElement("td");
-        cell.colSpan = 6;
+        cell.colSpan = 8;
         cell.className = "enterprise-empty";
         if (data.records.length === 0) {
           if (data.confidence === "X") {
@@ -3515,27 +3685,39 @@
           } else {
             cell.textContent = "当前查询没有可用的注册地址企业记录";
           }
+        } else if (state.enterpriseMatch === "primary" && data.candidateCount > 0) {
+          cell.textContent = "当前无“楼宇名 + 门牌地址”双匹配主名单，可切换“仅地址候选”查看候选记录";
         } else {
           cell.textContent = "没有符合当前筛选条件的企业记录";
         }
         row.appendChild(cell);
         elements.enterpriseBody.appendChild(row);
       } else {
-        records.forEach((record) => {
+        visiblePageRecords.forEach((entry) => {
+          const record = entry.record;
           const row = document.createElement("tr");
 
           const rank = document.createElement("td");
           rank.className = "enterprise-rank";
-          rank.textContent = record.rank === null ? "未排名" : String(record.rank);
+          rank.textContent = entry.rank === null ? "未排名" : String(entry.rank);
 
           const company = document.createElement("td");
           company.className = "enterprise-company";
           const name = document.createElement("strong");
           name.textContent = record.name;
+          const link = document.createElement("a");
+          link.className = "enterprise-link";
+          link.href =
+            "https://sales.tungee.com/find-enterprise/results?key=" +
+            encodeURIComponent(record.name);
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = "在探迹查询";
           const address = document.createElement("span");
           address.textContent = record.address;
           company.appendChild(name);
           company.appendChild(address);
+          company.appendChild(link);
 
           const industry = document.createElement("td");
           industry.textContent = record.industry;
@@ -3543,6 +3725,10 @@
           const scale = document.createElement("td");
           scale.textContent = record.scale;
           scale.title = TUNGEE_COMPANIES_META.scaleLegend[record.scale] || record.scale;
+
+          const status = document.createElement("td");
+          status.className = "enterprise-status";
+          status.textContent = record.status || "未披露";
 
           const capital = document.createElement("td");
           capital.className = "enterprise-capital";
@@ -3552,57 +3738,98 @@
           established.className = "enterprise-date";
           established.textContent = record.established || "未披露";
 
+          const match = document.createElement("td");
+          const matchBadge = document.createElement("span");
+          matchBadge.className = "enterprise-match " + record.matchLevel;
+          matchBadge.textContent = getEnterpriseMatchLabel(record.matchLevel);
+          matchBadge.title = getEnterpriseMatchTitle(record.matchLevel);
+          match.appendChild(matchBadge);
+
           row.appendChild(rank);
           row.appendChild(company);
           row.appendChild(industry);
           row.appendChild(scale);
+          row.appendChild(status);
           row.appendChild(capital);
           row.appendChild(established);
+          row.appendChild(match);
           elements.enterpriseBody.appendChild(row);
         });
       }
 
-      elements.enterpriseResultMeta.textContent =
-        "显示 " + records.length + " / " + data.recordCount + " 条分析记录";
+      const end = start + visiblePageRecords.length;
+      elements.enterpriseResultMeta.textContent = hasRecords
+        ? "显示 " + (start + 1) + "-" + end + " / " + records.length + " 条，当前范围共 " +
+          scopedRecords.length + " 条"
+        : "当前范围 0 条记录";
       elements.enterpriseRankMeta.textContent =
-        data.recordCount > 0
-          ? rankedCount + " 家有注册资本，可参与样本内排名"
+        scopedRecords.length > 0
+          ? rankedCount + " 家有注册资本，可参与当前范围排名"
           : "当前无可排名记录";
+      elements.enterprisePageMeta.textContent =
+        "第 " + state.enterprisePage + " / " + totalPages + " 页";
+      elements.enterprisePrevPage.disabled = !hasRecords || state.enterprisePage <= 1;
+      elements.enterpriseNextPage.disabled =
+        !hasRecords || state.enterprisePage >= totalPages;
+      elements.enterpriseTableWrap.scrollTop = 0;
     }
 
     function renderTungeeCompanyAnalysis(buildingId) {
       const data = getTungeeCompanies(buildingId);
-      const records = data.records;
+      const records = getScopedTungeeCompanyRecords(data);
       const industryCount = new Set(records.map((record) => record.industry)).size;
       const largeCount = records.filter((record) => {
         return record.scale === "1亿元以上" || record.scale === "1000万-1亿元";
       }).length;
       const undisclosedCount = records.filter((record) => record.scale === "未披露").length;
       const confidenceLabel = TUNGEE_META.confidenceLegend[data.confidence] || "待核查";
+      const modeLabel =
+        state.enterpriseMatch === "primary"
+          ? "名址双匹配主名单"
+          : state.enterpriseMatch === "address"
+            ? "地址候选"
+            : "全部地址记录";
+      const countLabel =
+        state.enterpriseMatch === "primary"
+          ? "名址双匹配企业"
+          : state.enterpriseMatch === "address"
+            ? "地址候选企业"
+            : "全部地址记录";
+      const verifiedCount = Number(data.verifiedCount) || 0;
+      const candidateCount = Number(data.candidateCount) || 0;
 
       elements.enterpriseSubtitle.textContent =
         data.recordCount > 0
-          ? "已采集注册地址样本 · " + data.sourceMode
+          ? modeLabel + " · " + data.sourceMode
           : data.confidence === "X"
             ? "当前查询无可确认的注册地址记录"
             : "未纳入主楼正式分析的注册地址候选";
       elements.enterpriseCoverage.textContent =
-        data.confidence + " · " + (data.recordCount > 0 ? data.recordCount + " 条" : "无正式记录");
+        data.confidence + " · " +
+        (data.recordCount > 0
+          ? formatCount(verifiedCount) + " 主 / " + formatCount(candidateCount) + " 候选"
+          : "无正式记录");
       elements.enterpriseCoverage.className =
         "enterprise-coverage " + getTungeeConfidenceClass(data.confidence);
       elements.enterpriseCoverage.title = confidenceLabel;
       elements.enterpriseCoverageNote.textContent = [
         data.coverageNote,
-        "总命中 " + formatCount(data.total) + "，已采集 " + formatCount(data.captured) + "。",
+        "总命中 " + formatCount(data.total) + "，已采集 " + formatCount(data.captured) + "；" +
+          "名址双匹配 " + formatCount(verifiedCount) + " 条，地址候选 " +
+          formatCount(candidateCount) + " 条。",
+        "当前查看：" + modeLabel + " " + formatCount(records.length) + " 条。",
         "查询：" + data.sourceQuery + "。",
         "行业与规模层级为分析分类，不是官方标签或企业质量评级。"
       ].join(" ");
 
-      elements.enterpriseCount.textContent = formatCount(data.recordCount);
+      elements.enterpriseCountLabel.textContent = countLabel;
+      elements.enterpriseCount.textContent = formatCount(records.length);
       elements.enterpriseIndustryCount.textContent = formatCount(industryCount);
       elements.enterpriseLargeCount.textContent = formatCount(largeCount);
       elements.enterpriseUndisclosedCount.textContent = formatCount(undisclosedCount);
       elements.enterpriseSearch.value = state.enterpriseQuery;
+      elements.enterpriseMatchFilter.value = state.enterpriseMatch;
+      elements.enterprisePageSize.value = String(state.enterprisePageSize);
 
       populateEnterpriseFilters(records);
       renderIndustryDistribution(records);
@@ -3722,9 +3949,12 @@
         "探迹审计说明",
         "探迹样本",
         "楼内分析记录数",
-        "楼内行业数",
-        "楼内1000万以上记录数",
-        "楼内企业分析样本",
+        "楼内名址双匹配数",
+        "楼内地址候选数",
+        "楼内主名单行业数",
+        "楼内主名单1000万以上记录数",
+        "楼内名址双匹配企业（前100，按资本排名）",
+        "楼内地址候选企业（前100，按资本排名）",
         "较基准"
       ];
 
@@ -3736,15 +3966,55 @@
         const tungeeSamples = tungee.companies
           .map((company) => company.name + "：" + company.address)
           .join("；");
+        const primaryEnterpriseRecords = enterprise.records.filter(
+          (record) => record.matchLevel === "primary"
+        );
+        const candidateEnterpriseRecords = enterprise.records.filter(
+          (record) => record.matchLevel === "address"
+        );
         const enterpriseIndustries = new Set(
-          enterprise.records.map((record) => record.industry)
+          primaryEnterpriseRecords.map((record) => record.industry)
         ).size;
-        const enterpriseLargeCount = enterprise.records.filter((record) => {
+        const enterpriseLargeCount = primaryEnterpriseRecords.filter((record) => {
           return record.scale === "1亿元以上" || record.scale === "1000万-1亿元";
         }).length;
-        const enterpriseSamples = enterprise.records
+        const enterpriseSamples = primaryEnterpriseRecords
+          .slice()
+          .sort((left, right) => {
+            if (left.rankPrimary !== null && right.rankPrimary !== null) {
+              return left.rankPrimary - right.rankPrimary;
+            }
+            if (left.rankPrimary !== null) return -1;
+            if (right.rankPrimary !== null) return 1;
+            return left.name.localeCompare(right.name, "zh-CN");
+          })
+          .slice(0, 100)
           .map((record) => {
-            const rankLabel = record.rank === null ? "未排名" : "第" + record.rank + "名";
+            const rankLabel =
+              record.rankPrimary === null ? "未排名" : "第" + record.rankPrimary + "名";
+            return [
+              rankLabel,
+              record.name,
+              record.capitalLabel,
+              record.industry,
+              record.scale
+            ].join("：");
+          })
+          .join("；");
+        const candidateEnterpriseSamples = candidateEnterpriseRecords
+          .slice()
+          .sort((left, right) => {
+            if (left.rankCandidate !== null && right.rankCandidate !== null) {
+              return left.rankCandidate - right.rankCandidate;
+            }
+            if (left.rankCandidate !== null) return -1;
+            if (right.rankCandidate !== null) return 1;
+            return left.name.localeCompare(right.name, "zh-CN");
+          })
+          .slice(0, 100)
+          .map((record) => {
+            const rankLabel =
+              record.rankCandidate === null ? "未排名" : "第" + record.rankCandidate + "名";
             return [
               rankLabel,
               record.name,
@@ -3785,9 +4055,12 @@
           tungee.note,
           tungeeSamples,
           enterprise.recordCount,
+          enterprise.verifiedCount,
+          enterprise.candidateCount,
           enterpriseIndustries,
           enterpriseLargeCount,
           enterpriseSamples,
+          candidateEnterpriseSamples,
           movement === 0 ? "0" : movement > 0 ? "+" + movement : String(movement)
         ];
       });
@@ -3800,7 +4073,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "武汉写字楼租户质量排名_20260911.csv";
+      link.download = "武汉写字楼租户质量排名_20260912.csv";
       document.body.appendChild(link);
       link.click();
       link.remove();
