@@ -2566,6 +2566,81 @@
         padding: 10px;
       }
     }
+
+    /* Dedicated detail view: ranking and building detail are separate screens. */
+    .workspace {
+      grid-template-columns: 250px minmax(0, 1fr);
+    }
+
+    .ranking-panel {
+      border-right: 0;
+    }
+
+    .detail-panel {
+      display: none;
+    }
+
+    .workspace.detail-view {
+      display: block;
+      min-height: calc(100vh - 73px);
+    }
+
+    .workspace.detail-view .controls-panel,
+    .workspace.detail-view .ranking-panel {
+      display: none;
+    }
+
+    .workspace.detail-view .detail-panel {
+      display: block;
+      padding: 26px clamp(20px, 3.5vw, 44px) 56px;
+      border: 0;
+      background: #fff;
+    }
+
+    .workspace.detail-view .detail-content {
+      display: grid;
+      grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+      align-items: start;
+      gap: 28px;
+      max-width: 1560px;
+      margin: 0 auto;
+    }
+
+    .detail-back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .detail-back-button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    @media (max-width: 1350px) {
+      .workspace {
+        grid-template-columns: 254px minmax(0, 1fr);
+      }
+
+      .workspace.detail-view .detail-content {
+        grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+        gap: 22px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .workspace.detail-view .detail-content {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .workspace.detail-view .detail-panel {
+        padding: 20px 16px 40px;
+        background: #f7faf8;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2600,7 +2675,7 @@
     </div>
   </header>
 
-  <main class="workspace">
+  <main class="workspace" id="workspace">
     <aside class="controls-panel">
       <section class="control-section">
         <div class="section-heading">
@@ -2719,6 +2794,12 @@
     <aside class="detail-panel" id="detailPanel">
       <div class="detail-content">
         <div class="detail-main" id="detailMain">
+          <button class="button detail-back-button" id="backToRankingButton" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m15 18-6-6 6-6"></path>
+            </svg>
+            返回排名
+          </button>
           <div class="detail-title-row">
             <div class="detail-title">
               <h2 id="detailName">平安金融中心大厦</h2>
@@ -3668,10 +3749,13 @@
       enterprisePage: 1,
       enterprisePageSize: 50,
       pageSize: 10,
-      currentPage: 1
+      currentPage: 1,
+      detailOpen: false,
+      rankingScrollY: 0
     };
 
     const elements = {
+      workspace: document.getElementById("workspace"),
       weightsList: document.getElementById("weightsList"),
       weightTotal: document.getElementById("weightTotal"),
       buildingSearch: document.getElementById("buildingSearch"),
@@ -3692,6 +3776,7 @@
       pagination: document.getElementById("pagination"),
       detailName: document.getElementById("detailName"),
       detailPanel: document.getElementById("detailPanel"),
+      backToRankingButton: document.getElementById("backToRankingButton"),
       detailArea: document.getElementById("detailArea"),
       detailStatus: document.getElementById("detailStatus"),
       detailScore: document.getElementById("detailScore"),
@@ -4169,11 +4254,11 @@
         row.classList.toggle("is-selected", building.id === state.selectedId);
         row.setAttribute("aria-selected", building.id === state.selectedId ? "true" : "false");
         row.title = building.profile;
-        row.addEventListener("click", () => selectBuilding(building.id));
+        row.addEventListener("click", () => openBuildingDetail(building.id));
         row.addEventListener("keydown", (event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            selectBuilding(building.id);
+            openBuildingDetail(building.id);
           }
         });
 
@@ -4235,10 +4320,44 @@
       state.enterprisePage = 1;
       renderRankings();
       renderDetail();
-      if (window.matchMedia("(max-width: 860px)").matches) {
-        window.requestAnimationFrame(() => {
-          elements.detailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+    }
+
+    function openBuildingDetail(id, options) {
+      const settings = options || {};
+      if (!state.detailOpen) {
+        state.rankingScrollY = window.scrollY;
+      }
+      selectBuilding(id);
+      state.detailOpen = true;
+      elements.workspace.classList.add("detail-view");
+      document.title = elements.detailName.textContent + " · 武汉写字楼租户质量分析";
+      window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0 }));
+      if (!settings.skipHistory && window.location.hash !== "#" + id) {
+        window.history.pushState({ detail: id }, "", "#" + id);
+      }
+    }
+
+    function closeBuildingDetail(options) {
+      const settings = options || {};
+      const isOpen = state.detailOpen || elements.workspace.classList.contains("detail-view");
+      if (!isOpen) return;
+      state.detailOpen = false;
+      elements.workspace.classList.remove("detail-view");
+      document.title = "武汉写字楼租户质量分析";
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: state.rankingScrollY, left: 0 });
+      });
+      if (!settings.skipHistory && window.location.hash) {
+        window.history.pushState({}, "", window.location.pathname + window.location.search);
+      }
+    }
+
+    function syncDetailFromLocation() {
+      const id = window.location.hash.replace(/^#/, "");
+      if (id && BUILDINGS.some((building) => building.id === id)) {
+        openBuildingDetail(id, { skipHistory: true });
+      } else {
+        closeBuildingDetail({ skipHistory: true });
       }
     }
 
@@ -5024,6 +5143,11 @@
     });
 
     elements.exportButton.addEventListener("click", exportCurrentRanking);
+    elements.backToRankingButton.addEventListener("click", () => closeBuildingDetail());
+    window.addEventListener("popstate", syncDetailFromLocation);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && state.detailOpen) closeBuildingDetail();
+    });
 
     initializeWeights();
     initializeFilters();
@@ -5032,6 +5156,7 @@
     renderStats();
     renderRankings();
     renderDetail();
+    if (window.location.hash) syncDetailFromLocation();
   </script>
 </body>
 </html>
