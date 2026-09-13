@@ -2952,41 +2952,6 @@
             </div>
           </section>
 
-          <section class="company-section">
-            <div class="section-heading">
-              <div>
-                <h2>楼内企业查询</h2>
-                <p id="companySectionSubtitle">公开披露样本，不代表全部租户</p>
-              </div>
-            </div>
-            <div class="company-toolbar">
-              <span class="input-shell">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.34-4.34"></path>
-                </svg>
-                <input id="companySearch" type="search" placeholder="搜索企业名称、行业或级别">
-              </span>
-              <select id="industryFilter" aria-label="行业筛选"></select>
-            </div>
-            <div class="company-meta">
-              <span id="companyResultMeta">0 条记录</span>
-              <span id="companyScope">当前楼宇</span>
-            </div>
-            <div class="company-table-wrap">
-              <table class="company-table">
-                <thead>
-                  <tr>
-                    <th>企业或机构</th>
-                    <th>行业</th>
-                    <th>类型</th>
-                    <th>级别</th>
-                  </tr>
-                </thead>
-                <tbody id="companyBody"></tbody>
-              </table>
-            </div>
-          </section>
         </div>
       </div>
     </aside>
@@ -3740,8 +3705,6 @@
       district: "全部",
       status: "全部",
       evidence: "全部",
-      companyQuery: "",
-      industry: "全部",
       enterpriseQuery: "",
       enterpriseIndustry: "全部",
       enterpriseScale: "全部",
@@ -3819,12 +3782,6 @@
       enterpriseNextPage: document.getElementById("enterpriseNextPage"),
       enterprisePageMeta: document.getElementById("enterprisePageMeta"),
       enterprisePageSize: document.getElementById("enterprisePageSize"),
-      companySectionSubtitle: document.getElementById("companySectionSubtitle"),
-      companySearch: document.getElementById("companySearch"),
-      industryFilter: document.getElementById("industryFilter"),
-      companyResultMeta: document.getElementById("companyResultMeta"),
-      companyScope: document.getElementById("companyScope"),
-      companyBody: document.getElementById("companyBody"),
       resetWeightsButton: document.getElementById("resetWeightsButton"),
       exportButton: document.getElementById("exportButton"),
       toast: document.getElementById("toast")
@@ -3986,16 +3943,6 @@
         elements.evidenceFilter.value = "全部";
         state.currentPage = 1;
         renderRankings();
-      });
-
-      elements.companySearch.addEventListener("input", () => {
-        state.companyQuery = elements.companySearch.value.trim().toLowerCase();
-        renderCompanies();
-      });
-
-      elements.industryFilter.addEventListener("change", () => {
-        state.industry = elements.industryFilter.value;
-        renderCompanies();
       });
 
       ["input", "search"].forEach((eventName) => {
@@ -4311,8 +4258,6 @@
 
     function selectBuilding(id) {
       state.selectedId = id;
-      state.companyQuery = "";
-      state.industry = "全部";
       state.enterpriseQuery = "";
       state.enterpriseIndustry = "全部";
       state.enterpriseScale = "全部";
@@ -4381,8 +4326,6 @@
       elements.detailProfile.textContent = building.profile;
       elements.detailCoverage.textContent = building.coverage;
       elements.detailAuditNote.textContent = audit.auditNote;
-      elements.companySectionSubtitle.textContent = "公开披露样本，不代表全部租户";
-      elements.companyScope.textContent = building.name;
       renderSources(audit.sourceKeys);
       renderTungeeAudit(building.id);
       renderTungeeCompanyAnalysis(building.id);
@@ -4413,18 +4356,6 @@
         elements.metricList.appendChild(row);
       });
 
-      elements.companySearch.value = state.companyQuery;
-      const industries = ["全部", ...Array.from(new Set(building.companies.map((company) => company.industry)))];
-      elements.industryFilter.replaceChildren();
-      industries.forEach((industry) => {
-        const option = document.createElement("option");
-        option.value = industry;
-        option.textContent = industry;
-        elements.industryFilter.appendChild(option);
-      });
-      elements.industryFilter.value = industries.includes(state.industry) ? state.industry : "全部";
-      state.industry = elements.industryFilter.value;
-      renderCompanies();
     }
 
     function renderSources(sourceKeys) {
@@ -4888,69 +4819,6 @@
       renderIndustryDistribution(records);
       renderScaleDistribution(records);
       renderTungeeCompanyRecords();
-    }
-
-    function getVisibleCompanies() {
-      const building = BUILDINGS.find((item) => item.id === state.selectedId);
-      if (!building) return [];
-      return building.companies.filter((company) => {
-        const haystack = [
-          company.name,
-          company.industry,
-          company.type,
-          company.level
-        ].join(" ").toLowerCase();
-        const matchesQuery = !state.companyQuery || haystack.includes(state.companyQuery);
-        const matchesIndustry = state.industry === "全部" || company.industry === state.industry;
-        return matchesQuery && matchesIndustry;
-      });
-    }
-
-    function renderCompanies() {
-      const building = BUILDINGS.find((item) => item.id === state.selectedId);
-      const companies = getVisibleCompanies();
-      elements.companyBody.replaceChildren();
-
-      if (!building || companies.length === 0) {
-        const row = document.createElement("tr");
-        const cell = document.createElement("td");
-        cell.colSpan = 4;
-        cell.className = "company-empty";
-        if (!building || building.companies.length === 0) {
-          cell.textContent = "该楼宇暂无公开披露的具体企业名单";
-        } else {
-          cell.textContent = "没有匹配的企业记录";
-        }
-        row.appendChild(cell);
-        elements.companyBody.appendChild(row);
-      } else {
-        companies.forEach((company) => {
-          const row = document.createElement("tr");
-
-          const name = document.createElement("td");
-          name.className = "company-name";
-          name.textContent = company.name;
-
-          const industry = document.createElement("td");
-          industry.textContent = company.industry;
-
-          const type = document.createElement("td");
-          type.className = "company-type";
-          type.textContent = company.type;
-
-          const level = document.createElement("td");
-          level.textContent = company.level;
-
-          row.appendChild(name);
-          row.appendChild(industry);
-          row.appendChild(type);
-          row.appendChild(level);
-          elements.companyBody.appendChild(row);
-        });
-      }
-
-      const total = building ? building.companies.length : 0;
-      elements.companyResultMeta.textContent = "显示 " + companies.length + " / " + total + " 条具名公开样本";
     }
 
     function renderAll() {
